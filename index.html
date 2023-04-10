@@ -1,87 +1,93 @@
-<body>
-	<div id="basic-settings" class="separator settings">
-		<div class="slider-wrapper">
-			<label for="volume">Volume</label>
-			<input class = "slider" type="range" id="volume" name="volume" min="0.001" max="0.5" step="0.001" value="0.1">
-		</div>
-		<div class="number-input-wrapper">
-			<label for="bpm">BPM:</label>
-			<input type="number" id="bpm" class="number-input" name="bpm" min="1" max="999" value="120" step="1">
-		</div>
-		<div class="dropdown-wrapper">
-		<label for="rhythm">Spin</label>
-			<select id="rhythm" class="dropdown">
-				<option id="8" name="rhythm" value="8">x1/8</option>
-				<option id="4" name="rhythm" value="4">x1/4</option>
-				<option id="2" name="rhythm" value="2">x1/2</option>
-				<option id="0" name="rhythm" value="0">0</option>
-				<option id="1" name="rhythm" value="1" selected>x1</option>
-				<option id="1/2" name="rhythm" value="0.5">x2</option>
-				<option id="1/4" name="rhythm" value="0.25">x4</option>
-			</select>
-		</div>
-		<div class="dropdown-wrapper" id="drawing-selector">
-			<label for="drawing-selector">Drawing:</label>
-			<input type="radio" id="ball" name="drawing" value="ball" class="button" checked></input>
-			<input type="radio" id="wall" name="drawing" value="wall" class="button"></input>
-		</div>
-		<div class="dropdown-wrapper" id="snap-selector">
-			<label for="snap-selector">Snap to Grid?:</label>
-			<div class="checkbox-wrapper">
-				<input type="checkbox" id="snap" name="snap" class="button">
+<html>
+	<head>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<div id="basic-settings" class="separator settings">
+			<div class="slider-wrapper">
+				<label for="volume">Volume</label>
+				<input class = "slider" type="range" id="volume" name="volume" min="0.001" max="0.5" step="0.001" value="0.1">
 			</div>
-		</div>
-		<div class="slider-wrapper">
-			<label for="gravity">Gravity</label>
-			<input class = "slider" type="range" id="gravity" name="gravity" min="0" max="500" step="1" value="250">
-			<label for="bounce">Bounce</label>
-			<input class = "slider" type="range" id="bounce" name="bounce" min="1" max="2" step="0.01" value="1">
-		</div>
-	</div>
-	<div id="mainScreen" class="main-screen separator">
-		<canvas id="canvas"></canvas>
-		<label id="fps">FPS: null</label>
-		<button id="start">START</button>
-		<button id="pause" style="display: none">PAUSE</button>
-		<button id="reset">RESET</button>
-	</div>
-	<div id="sound-settings" class="separator settings">
-		<div id="adsr" class="slider-wrapper">
-			<label for="attack">Attack</label>
-			<input class = "slider" type="range" id="attack" name="attack" min="0.001" max="2" step="0.001" value="0.01">
-			<label for="decay">Decay</label>
-			<input class = "slider" type="range" id="decay" name="decay" min="0.001" max="2" step="0.001" value="0.1">
-			<label for="sustain">Sustain</label>
-			<input class = "slider" type="range" id="sustain" name="sustain" min="0.001" max="1" step="0.001" value="1">
-			<label for="release">Release</label>
-			<input class = "slider" type="range" id="release" name="release" min="0.001" max="2" step="0.001" value="0.5">
-		</div>
-		<div id="harmony" class="separator">
+			<div class="number-input-wrapper">
+				<label for="bpm">BPM:</label>
+				<input type="number" id="bpm" class="number-input" name="bpm" min="1" max="999" value="120" step="1">
+			</div>
 			<div class="dropdown-wrapper">
-				<label for="wave">Wave</label>
-				<select name="wave" id="wave" class="dropdown">
-				  <option value="sine">Sine</option>
-				  <option value="square">Square</option>
-				  <option value="sawtooth">Sawtooth</option>
-				  <option value="triangle">Triangle</option>
+			<label for="rhythm">Spin</label>
+				<select id="rhythm" class="dropdown">
+					<option id="8" name="rhythm" value="8">x1/8</option>
+					<option id="4" name="rhythm" value="4">x1/4</option>
+					<option id="2" name="rhythm" value="2">x1/2</option>
+					<option id="0" name="rhythm" value="0">0</option>
+					<option id="1" name="rhythm" value="1" selected>x1</option>
+					<option id="1/2" name="rhythm" value="0.5">x2</option>
+					<option id="1/4" name="rhythm" value="0.25">x4</option>
 				</select>
 			</div>
-			<div class="dropdown-wrapper">
-				<label for="key">Key</label>
-				<select name="key" id="key" class="dropdown"><!--AUTO GENERATED--></select>
+			<div class="dropdown-wrapper" id="drawing-selector">
+				<label for="drawing-selector">Drawing:</label>
+				<input type="radio" id="ball" name="drawing" value="ball" class="button" checked></input>
+				<input type="radio" id="wall" name="drawing" value="wall" class="button"></input>
 			</div>
-			<div class="dropdown-wrapper">
-				<label for="mode">Mode</label>
-				<select name="mode" id="mode" class="dropdown"><!--AUTO GENERATED--></select>
+			<div class="dropdown-wrapper" id="snap-selector">
+				<label for="snap-selector">Snap to Grid?:</label>
+				<div class="checkbox-wrapper">
+					<input type="checkbox" id="snap" name="snap" class="button">
+				</div>
 			</div>
-			<div class="dropdown-wrapper">
-				<label for="scale">Scale</label>
-				<select name="scale" id="scale" class="dropdown"><!--AUTO GENERATED--></select>
+			<div class="slider-wrapper">
+				<label for="gravity">Gravity</label>
+				<input class = "slider" type="range" id="gravity" name="gravity" min="0" max="500" step="1" value="250">
+				<label for="bounce">Bounce</label>
+				<input class = "slider" type="range" id="bounce" name="bounce" min="1" max="2" step="0.01" value="1">
 			</div>
 		</div>
-		<div class="slider-wrapper">
-			<label for="filter">Cutoff</label>
-			<input class = "slider" type="range" id="filter" name="release" min="4" max="142" step="1" value="100">
+		<div id="mainScreen" class="main-screen separator">
+			<canvas id="canvas"></canvas>
+			<label id="fps">FPS: null</label>
+			<button id="start">START</button>
+			<button id="pause" style="display: none">PAUSE</button>
+			<button id="reset">RESET</button>
 		</div>
-	</div>
-</body>
+		<div id="sound-settings" class="separator settings">
+			<div id="adsr" class="slider-wrapper">
+				<label for="attack">Attack</label>
+				<input class = "slider" type="range" id="attack" name="attack" min="0.001" max="2" step="0.001" value="0.01">
+				<label for="decay">Decay</label>
+				<input class = "slider" type="range" id="decay" name="decay" min="0.001" max="2" step="0.001" value="0.1">
+				<label for="sustain">Sustain</label>
+				<input class = "slider" type="range" id="sustain" name="sustain" min="0.001" max="1" step="0.001" value="1">
+				<label for="release">Release</label>
+				<input class = "slider" type="range" id="release" name="release" min="0.001" max="2" step="0.001" value="0.5">
+			</div>
+			<div id="harmony" class="separator">
+				<div class="dropdown-wrapper">
+					<label for="wave">Wave</label>
+					<select name="wave" id="wave" class="dropdown">
+					<option value="sine">Sine</option>
+					<option value="square">Square</option>
+					<option value="sawtooth">Sawtooth</option>
+					<option value="triangle">Triangle</option>
+					</select>
+				</div>
+				<div class="dropdown-wrapper">
+					<label for="key">Key</label>
+					<select name="key" id="key" class="dropdown"><!--AUTO GENERATED--></select>
+				</div>
+				<div class="dropdown-wrapper">
+					<label for="mode">Mode</label>
+					<select name="mode" id="mode" class="dropdown"><!--AUTO GENERATED--></select>
+				</div>
+				<div class="dropdown-wrapper">
+					<label for="scale">Scale</label>
+					<select name="scale" id="scale" class="dropdown"><!--AUTO GENERATED--></select>
+				</div>
+			</div>
+			<div class="slider-wrapper">
+				<label for="filter">Cutoff</label>
+				<input class = "slider" type="range" id="filter" name="release" min="4" max="142" step="1" value="100">
+			</div>
+		</div>
+	</body>
+	<script src="main.js"></script>
+</html>
