@@ -1,6 +1,10 @@
 export interface Canvas{
-    source: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+    element: HTMLCanvasElement
+    ctx: CanvasRenderingContext2D
+    dimensions: Point
+    center: Point
+    paused: boolean
+    fresh: boolean
 }
 
 export interface Point{
@@ -9,7 +13,7 @@ export interface Point{
 }
 
 export interface Drawable{
-	draw(): void;
+	draw(canvas: Canvas): void;
 }
 
 export interface Envelope{

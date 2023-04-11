@@ -1,4 +1,21 @@
-import { Drawable, Point } from "../Types.js"
+import { Canvas, Drawable, Point } from "../Types.js"
+
+const drawBall = (ball: Ball, canvas: Canvas) =>{
+    canvas.ctx.fillStyle = ball.color
+    canvas.ctx.beginPath()
+    canvas.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2)
+    canvas.ctx.closePath()
+    canvas.ctx.fill()
+}
+
+export const generateBalls = (amount: number, centers: Point[], velocity: Point, acceleration: Point, radius: number, color: string ): Ball[] =>{
+    const balls: Ball[] = []
+    for(let i=0; i<amount; i++){
+        const ball: Ball = new Ball(centers[i], velocity, acceleration, radius, color)
+        balls.push(ball)
+    }
+    return balls
+}
 
 export class Ball implements Drawable{
     center: Point
@@ -6,15 +23,13 @@ export class Ball implements Drawable{
     acceleration: Point
     radius: number
     color: string
-    drawFunction: any
 
-    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color: string, drawFunction){
+    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color: string){
         this.center = center
         this.velocity = velocity
         this.acceleration = acceleration
         this.radius = radius
         this.color = color
-        this.drawFunction = drawFunction
     }   
 	
 	getNextPosition(timeDelta: number){
@@ -39,7 +54,7 @@ export class Ball implements Drawable{
 		this.center.x -= this.velocity.x * (timeDelta / 1000)
 	}
 
-    draw(){
-        this.drawFunction(this)
+    draw(canvas: Canvas){
+        drawBall(this, canvas)
     }
 }
