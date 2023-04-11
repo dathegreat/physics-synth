@@ -1,4 +1,4 @@
-import { Drawable, Point } from "../Types"
+import { Drawable, Point } from "../Types.js"
 
 export class Ball implements Drawable{
     center: Point
@@ -8,13 +8,13 @@ export class Ball implements Drawable{
     color: string
     drawFunction: any
 
-    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color: string, draw){
+    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color: string, drawFunction){
         this.center = center
         this.velocity = velocity
         this.acceleration = acceleration
         this.radius = radius
         this.color = color
-        this.drawFunction = draw
+        this.drawFunction = drawFunction
     }   
 	
 	getNextPosition(timeDelta: number){

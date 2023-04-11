@@ -1,4 +1,4 @@
-import { Drawable, Point } from "../Types"
+import { Drawable, Point } from "../Types.js"
 
 const rotatePointAboutPoint = (p1: Point, p2: Point, angle: number): Point =>{
     const rotatedPoint: Point = { 
@@ -37,6 +37,7 @@ export class Polygon implements Drawable{
         this.points = points
 		this.sides = pointsToLines(this.points)
         this.sideLength = Math.sqrt(Math.pow(this.points[1].x - this.points[0].x, 2) + Math.pow(this.points[1].y - this.points[0].y, 2) )
+        this.drawFunction = drawFunction
     }
 
 	step(timeDelta: number){
