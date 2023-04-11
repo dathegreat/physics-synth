@@ -2,19 +2,13 @@
 //TODO: add custom selection to scale, upon selecting "custom" another option box appears with scale selection features
 //TODO: Make snap to grid a regular checkbox
 
-import { Polygon } from "./Classes/Polygon"
-import { SessionState } from "./Classes/SessionState"
-import { Ball } from "./Classes/Ball"
-import { Point, Canvas, Drawable, Envelope } from "./Types"
-import { Modes, Scales, KeyToTonic } from "./MusicConstants"
+import { Polygon } from "./Classes/Polygon.js"
+import { SessionState } from "./Classes/SessionState.js"
+import { Ball } from "./Classes/Ball.js"
+import { Point, Canvas, Drawable, Envelope } from "./Types.js"
+import { Modes, Scales, KeyToTonic } from "./MusicConstants.js"
 
-const canvasElement = <HTMLCanvasElement> document.getElementById("canvas")
-const c: Canvas = {
-    source: canvasElement, 
-    ctx: <CanvasRenderingContext2D> canvasElement.getContext("2d")
-}
-
-const state = new SessionState(c)
+let state: any;
 
 const generatePolygonAtPoint = (center: Point, radius: number, sides: number, rotation: number=0): Point[] =>{
     let polygon: Point[] = []
@@ -40,16 +34,16 @@ const drawADSR = (center: Point, size: Point, ADSR: Envelope) =>{
 	const normD = (ADSR.decay / totalDuration) * (size.x * padding)
 	const normR = (ADSR.release / totalDuration) * (size.x * padding)
 	//draw outline
-	c.ctx.beginPath()
-	c.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
-	c.ctx.stroke()
+	state.canvas.ctx.beginPath()
+	state.canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	state.canvas.ctx.stroke()
 	//draw graph
-	c.ctx.moveTo(leftCorner.x, rightCorner.y)
-	c.ctx.lineTo(leftCorner.x + normA, leftCorner.y)
-	c.ctx.lineTo(leftCorner.x + normA + normD, (rightCorner.y) - (size.y * padding * ADSR.sustain))
-	c.ctx.lineTo(rightCorner.x, rightCorner.y)
-	c.ctx.stroke()
-	c.ctx.closePath()
+	state.canvas.ctx.moveTo(leftCorner.x, rightCorner.y)
+	state.canvas.ctx.lineTo(leftCorner.x + normA, leftCorner.y)
+	state.canvas.ctx.lineTo(leftCorner.x + normA + normD, (rightCorner.y) - (size.y * padding * ADSR.sustain))
+	state.canvas.ctx.lineTo(rightCorner.x, rightCorner.y)
+	state.canvas.ctx.stroke()
+	state.canvas.ctx.closePath()
 }
 
 const drawFilter = (center: Point, size: Point, cutoff: number, qValue: number) =>{
@@ -62,36 +56,36 @@ const drawFilter = (center: Point, size: Point, cutoff: number, qValue: number) 
 	const maxFrequency = 142 //sqrt of 20,000Hz 
 	//normalize each segment width to percentage of graph width
 	const normCutoff = (sqrtFrequency / maxFrequency) * size.x
-	const normQ = (qValue / 1000) * size.y
+	const normQ = (qValue / 100) * size.y
 	//value at which volume is ~0
 	const trueCutoff = normCutoff * 2 
 	//clip output to bounding rect
-	c.ctx.save()
-	c.ctx.beginPath()
-	c.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
-	c.ctx.clip()
+	state.canvas.ctx.save()
+	state.canvas.ctx.beginPath()
+	state.canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	state.canvas.ctx.clip()
 	//draw outline
-	c.ctx.beginPath()
-	c.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
-	c.ctx.stroke()
+	state.canvas.ctx.beginPath()
+	state.canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	state.canvas.ctx.stroke()
 	//draw graph
-	c.ctx.moveTo(leftCorner.x, leftCorner.y + normQ)
-	c.ctx.lineTo(leftCorner.x + normCutoff, leftCorner.y + normQ)
-	c.ctx.quadraticCurveTo(leftCorner.x + normCutoff + trueCutoff / 4, leftCorner.y - normQ, trueCutoff, rightCorner.y)
-	c.ctx.stroke()
-	c.ctx.closePath()
+	state.canvas.ctx.moveTo(leftCorner.x, leftCorner.y + normQ)
+	state.canvas.ctx.lineTo(leftCorner.x + normCutoff, leftCorner.y + normQ)
+	state.canvas.ctx.quadraticCurveTo(leftCorner.x + normCutoff + (trueCutoff / 4) - normQ, leftCorner.y - normQ, leftCorner.x + trueCutoff, rightCorner.y)
+	state.canvas.ctx.stroke()
+	state.canvas.ctx.closePath()
 	//remove clipping path from future drawings
-	c.ctx.restore()
+	state.canvas.ctx.restore()
 }
 
 const drawPolygon = (polygon: Polygon) =>{
-    c.ctx.beginPath()
+    state.canvas.ctx.beginPath()
     for(let i=0; i<polygon.sides.length; i++){
-        c.ctx.moveTo( polygon.sides[i][0].x, polygon.sides[i][0].y )
-        c.ctx.lineTo( polygon.sides[i][1].x, polygon.sides[i][1].y )
+        state.canvas.ctx.moveTo( polygon.sides[i][0].x, polygon.sides[i][0].y )
+        state.canvas.ctx.lineTo( polygon.sides[i][1].x, polygon.sides[i][1].y )
     }
-    c.ctx.stroke()
-    c.ctx.closePath()
+    state.canvas.ctx.stroke()
+    state.canvas.ctx.closePath()
 }
 
 const normalize = (value: number, min: number, max: number): number =>{
@@ -99,11 +93,11 @@ const normalize = (value: number, min: number, max: number): number =>{
 }
 
 const drawBall = (ball: Ball) =>{
-    c.ctx.fillStyle = ball.color
-    c.ctx.beginPath()
-    c.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2)
-    c.ctx.closePath()
-    c.ctx.fill()
+    state.canvas.ctx.fillStyle = ball.color
+    state.canvas.ctx.beginPath()
+    state.canvas.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2)
+    state.canvas.ctx.closePath()
+    state.canvas.ctx.fill()
 }
 
 const generateBalls = (amount: number, centers: Point[], velocity: Point, acceleration: Point, radius: number, color: string ): Ball[] =>{
@@ -269,7 +263,7 @@ const testGlobalCollision = (ball: Ball, polygons: Polygon[], timeDelta: number)
 }
 
 const drawAllObjects = (objects: Drawable[][]) =>{
-	c.ctx.clearRect(0,0,state.canvas.dimensions.x, state.canvas.dimensions.y)
+	state.canvas.ctx.clearRect(0,0,state.canvas.dimensions.x, state.canvas.dimensions.y)
 	for(let i=0; i<objects.length; i++){
 		for(let j=0; j<objects[i].length; j++){
 			objects[i][j].draw()
@@ -303,33 +297,40 @@ const generateSelectionOptions = (div: string, options: string[]) =>{
 }
 
 const drawStartText = (size: number) =>{
-	c.ctx.font = `${size}em monospace`
+	state.canvas.ctx.font = `${size}em monospace`
 	const text = "Touch Here to Place Objects"
-	const textSize = c.ctx.measureText(text)
-	c.ctx.fillStyle = "white"
-	c.ctx.fillText(
+	const textSize = state.canvas.ctx.measureText(text)
+	state.canvas.ctx.fillStyle = "white"
+	state.canvas.ctx.fillText(
 		text, 
 		(state.canvas.dimensions.x / 2) - (textSize.width / 2), 
 		(state.canvas.dimensions.y / 2) + (textSize.actualBoundingBoxAscent / 2)
 	)
-	c.ctx.fillStyle = "black"
+	state.canvas.ctx.fillStyle = "black"
 }
 
 const drawPlacingBall = (lineStart: Point, lineEnd: Point) =>{
 	//draw ball outline
-	c.ctx.beginPath()
-	c.ctx.arc(lineStart.x, lineStart.y, state.objects.ballRadius, 0, Math.PI * 2)
-	c.ctx.closePath()
-	c.ctx.stroke()
+	state.canvas.ctx.beginPath()
+	state.canvas.ctx.arc(lineStart.x, lineStart.y, state.objects.ballRadius, 0, Math.PI * 2)
+	state.canvas.ctx.closePath()
+	state.canvas.ctx.stroke()
 	//draw ball's velocity vector
-	c.ctx.beginPath()
-	c.ctx.moveTo(lineStart.x, lineStart.y)
-	c.ctx.lineTo(lineEnd.x, lineEnd.y)
-	c.ctx.closePath()
-	c.ctx.stroke()
+	state.canvas.ctx.beginPath()
+	state.canvas.ctx.moveTo(lineStart.x, lineStart.y)
+	state.canvas.ctx.lineTo(lineEnd.x, lineEnd.y)
+	state.canvas.ctx.closePath()
+	state.canvas.ctx.stroke()
 }
 
+
 const initializeCanvas = () =>{
+	const canvasElement = <HTMLCanvasElement> document.getElementById("canvas")
+	const c: Canvas = {
+		source: canvasElement, 
+		ctx: <CanvasRenderingContext2D> canvasElement.getContext("2d")
+	}
+	state = new SessionState(c);
 	c.source.width = state.canvas.dimensions.x
 	c.source.height = state.canvas.dimensions.y
 
@@ -339,7 +340,7 @@ const initializeCanvas = () =>{
 		polygonStartingPoints,
 		{x: 0, y: 0},
 		{x: 0, y: 0},
-		Math.PI / 10,
+		0,
 		drawPolygon
 	)
 	const polygonThickness = 10
@@ -349,7 +350,7 @@ const initializeCanvas = () =>{
 		polygonShellStartingPoints,
 		{x: 0, y: 0},
 		{x: 0, y: 0},
-		Math.PI / 10,
+		0,
 		drawPolygon
 	)
 
@@ -357,26 +358,26 @@ const initializeCanvas = () =>{
 	for( const polygon of state.objects.polygons){
 		polygon.draw()
 	}
-	c.ctx.fillStyle = "rgba(0,0,0,0.25)"
-	c.ctx.fillRect(0,0,state.canvas.dimensions.x,state.canvas.dimensions.y)
+	state.canvas.ctx.fillStyle = "rgba(0,0,0,0.25)"
+	state.canvas.ctx.fillRect(0,0,state.canvas.dimensions.x,state.canvas.dimensions.y)
 	drawStartText(2)
 	state.music.synth.drawADSR = drawADSR
 	state.music.synth.drawFilter = drawFilter
+
+	generateSelectionOptions("key", Object.keys(KeyToTonic))
+	generateSelectionOptions("mode", Object.keys(Modes))
+	generateSelectionOptions("scale", Object.keys(Scales))
 }
 
-generateSelectionOptions("key", Object.keys(KeyToTonic))
-generateSelectionOptions("mode", Object.keys(Modes))
-generateSelectionOptions("scale", Object.keys(Scales))
-
 function animationLoop(){
-	c.ctx.clearRect(0,0,state.canvas.dimensions.x, state.canvas.dimensions.y)
+	state.canvas.ctx.clearRect(0,0,state.canvas.dimensions.x, state.canvas.dimensions.y)
 	for( const polygon of state.objects.polygons){
 		polygon.draw()
 	}
 	for( const ball of state.objects.balls){
 		ball.draw()
 	}
-	state.music.synth.drawGraph(state.canvas.center, state.music.graphSize)
+	state.music.synth.drawGraph({x: state.music.graphSize.x / 2, y: state.music.graphSize.y}, state.music.graphSize)
 	if(state.placement.currentlyPlacing == "ball" && state.placement.pointerDown){
 		drawPlacingBall(state.placement.lineStart, state.placement.lineEnd)
 	}
@@ -399,7 +400,7 @@ function physicsLoop(callTime){
 		const collision = testGlobalCollision(state.objects.balls[i], state.objects.polygons, timeDelta)
 		if( collision ){
 			state.music.synth.playRandomNote()
-			const bounceVector = calculateBounce( state.objects.balls[i], lineToVector(collision[1]) )
+			const bounceVector = calculateBounce( state.objects.balls[i], lineToVector(<Point[]> collision) )
 			state.objects.balls[i].velocity = bounceVector
 			state.objects.balls[i].color = "blue"
 		}
@@ -411,7 +412,7 @@ function physicsLoop(callTime){
 	}
 }
 
-document.getElementById("canvas").addEventListener("load", initializeCanvas)
+window.addEventListener("load", initializeCanvas)
 
 document.getElementById("bounce").addEventListener("change", (e)=>{
 	const bounceInput = e.target as HTMLInputElement
@@ -507,6 +508,8 @@ document.getElementById("rhythm").addEventListener("change", (e)=>{
 	}else{
 		state.music.rhythm = 0.0
 	}
+	state.objects.polygons[0].rotationalVelocity = state.music.rhythm
+	state.objects.polygons[1].rotationalVelocity = state.music.rhythm
 })
 document.getElementById("volume").addEventListener("input", (e)=>{
 	const volumeInput = e.target as HTMLInputElement

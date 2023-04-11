@@ -1,5 +1,5 @@
-import { KeyToTonic } from "../MusicConstants"
-import { Envelope, Canvas, Point } from "../Types"
+import { KeyToTonic } from "../MusicConstants.js"
+import { Envelope, Canvas, Point } from "../Types.js"
 
 
 export class Synth{

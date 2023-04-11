@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Scales = exports.Modes = exports.KeyToTonic = void 0;
-exports.KeyToTonic = {
+export const KeyToTonic = {
     "A": 27.50,
     "A#": 29.14,
     "B": 30.87,
@@ -15,7 +12,7 @@ exports.KeyToTonic = {
     "G": 24.50,
     "G#": 25.96
 };
-exports.Modes = {
+export const Modes = {
     major: {
         1: 1,
         2: 1.122462,
@@ -37,9 +34,10 @@ exports.Modes = {
         8: 2
     }
 };
-exports.Scales = {
+export const Scales = {
     pentatonic: [1, 2, 3, 5, 6],
     chromatic: [1, 2, 3, 4, 5, 6, 7],
     triad: [1, 3, 5],
     seventh: [1, 3, 5, 7]
 };
+//# sourceMappingURL=MusicConstants.js.map
