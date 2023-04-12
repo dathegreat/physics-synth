@@ -9,7 +9,7 @@ const rotatePointAboutPoint = (p1: Point, p2: Point, angle: number): Point =>{
     return rotatedPoint;
 }
 
-const pointsToLines = (points: Point[]): Point[][] =>{
+const pointsToLines = (points: Point[], closed: boolean): Point[][] =>{
 	const lines: Point[][] = []
 	for(let i=0; i<points.length-1; i++){
         lines.push( [
@@ -17,10 +17,12 @@ const pointsToLines = (points: Point[]): Point[][] =>{
 			{ x: points[i+1].x, y: points[i+1].y }
 		] )
     }
-    lines.push( [
-		{ x: points[points.length-1].x, y: points[points.length-1].y },
-		{ x: points[0].x,               y: points[0].y }
-	] )
+    if(closed){
+        lines.push( [
+            { x: points[points.length-1].x, y: points[points.length-1].y },
+            { x: points[0].x,               y: points[0].y }
+        ] )
+    }
 	return lines
 }
 
@@ -58,7 +60,7 @@ export const generateRectangleFromCenterline = (centerLine: Point[], width: numb
 		{ x: centerLine[1].x - thicknessVector.x, y: centerLine[1].y - thicknessVector.y }, //bottom left
 		{ x: centerLine[1].x + thicknessVector.x, y: centerLine[1].y + thicknessVector.y }  //bottom right
 	]
-	return new Polygon(midpoint, points, {x:0, y:0}, {x:0, y:0}, 0)
+	return new Polygon(midpoint, points, {x:0, y:0}, {x:0, y:0}, 0, true)
 }
 
 export class Polygon implements Drawable{
@@ -67,13 +69,15 @@ export class Polygon implements Drawable{
     points: Point[]
 	sides: Point[][]
     sideLength: number
+    closed: boolean
 
-    constructor(center: Point, points: Point[], velocity: Point, acceleration: Point, rotationalVelocity: number){
+    constructor(center: Point, points: Point[], velocity: Point, acceleration: Point, rotationalVelocity: number, closed: boolean){
         this.center = center;
 		this.rotationalVelocity = rotationalVelocity
         this.points = points
-		this.sides = pointsToLines(this.points)
+		this.sides = pointsToLines(this.points, closed)
         this.sideLength = Math.sqrt(Math.pow(this.points[1].x - this.points[0].x, 2) + Math.pow(this.points[1].y - this.points[0].y, 2) )
+        this.closed = closed
     }
 
 	step(timeDelta: number){
@@ -84,7 +88,7 @@ export class Polygon implements Drawable{
 	
     rotate(angle: number){
         this.points = this.points.map( (point)=> {return rotatePointAboutPoint(point, this.center, angle)} )
-		this.sides = pointsToLines(this.points)
+		this.sides = pointsToLines(this.points, this.closed)
     }
 
     draw(canvas: Canvas){

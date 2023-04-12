@@ -27,10 +27,24 @@
 			</div>
 			<div class="dropdown-wrapper" id="drawing-selector">
 				<label for="drawing-selector">Drawing:</label>
-				<input type="radio" id="ball" name="drawing" value="ball" class="button" checked></input>
-				<input type="radio" id="wall" name="drawing" value="wall" class="button"></input>
-				<input type="radio" id="continuous" name="drawing" value="continuous" class="button"></input>
+				<input type="radio" id="ball" name="drawing" value="ball" class="drawing-button" checked></input>
+				<label for="ball">
+					Ball
+				</label>
+				<input type="radio" id="wall" name="drawing" value="wall" class="drawing-button"></input>
+				<label for="wall">
+					Wall
+				</label>
+				<input type="radio" id="continuous" name="drawing" value="continuous" class="drawing-button"></input>
+				<label for="continuous">
+					Freehand
+					<object type="image/svg+xml" data="Icons/freehand-drawing-icon.svg" class="drawing-button"></object>
+				</label>
 				<input type="radio" id="points" name="drawing" value="points" class="button"></input>
+				<label for="points">
+					Polygon
+					<object type="image/svg+xml" data="Icons/polygon-drawing-icon.svg" class="drawing-button"></object>
+				</label>
 			</div>
 			<div class="dropdown-wrapper" id="snap-selector">
 				<label for="snap-selector">Snap to Grid?:</label>

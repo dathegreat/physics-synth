@@ -2,7 +2,6 @@
 //TODO: add custom selection to scale, upon selecting "custom" another option box appears with scale selection features
 //TODO: Make snap to grid a regular checkbox
 //TODO: despawn balls when they leave the bottom of frame
-//TODO: add point drawing mode to make irregular polygons
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js";
@@ -92,6 +91,7 @@ const drawPlacingBall = (lineStart, lineEnd, radius, canvas) => {
 };
 const drawLinesBetweenPoints = (points, color, canvas) => {
     canvas.ctx.strokeStyle = color;
+    canvas.ctx.lineWidth = 3;
     canvas.ctx.beginPath();
     canvas.ctx.moveTo(points[0].x, points[0].y);
     for (let i = 0; i < points.length; i++) {
@@ -99,6 +99,7 @@ const drawLinesBetweenPoints = (points, color, canvas) => {
     }
     canvas.ctx.stroke();
     canvas.ctx.closePath();
+    canvas.ctx.lineWidth = 2;
 };
 const initializeCanvas = () => {
     const canvasElement = document.getElementById("canvas");
@@ -110,10 +111,10 @@ const initializeCanvas = () => {
     c.element.width = state.canvas.dimensions.x;
     c.element.height = state.canvas.dimensions.y;
     const polygonStartingPoints = generatePolygonAtPoint(state.canvas.center, state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 : state.canvas.dimensions.y * 0.45, 6, Math.PI / 2);
-    const polygon = new Polygon(state.canvas.center, polygonStartingPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0);
+    const polygon = new Polygon(state.canvas.center, polygonStartingPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0, true);
     const polygonThickness = 10;
     const polygonShellStartingPoints = generatePolygonAtPoint(state.canvas.center, state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 + polygonThickness : state.canvas.dimensions.y * 0.45 + polygonThickness, 6, Math.PI / 2);
-    const polygonShell = new Polygon(state.canvas.center, polygonShellStartingPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0);
+    const polygonShell = new Polygon(state.canvas.center, polygonShellStartingPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0, true);
     state.objects.polygons.push(polygon, polygonShell);
     for (const polygon of state.objects.polygons) {
         polygon.draw(state.canvas);
@@ -141,6 +142,10 @@ function animationLoop() {
         const lineThickness = 10;
         const rectangle = generateRectangleFromCenterline([state.placement.lineStart, state.placement.lineEnd], lineThickness);
         rectangle.draw(state.canvas);
+    }
+    if (state.placement.currentlyPlacing == "continuous" && state.placement.pointerDown) {
+        drawLinesBetweenPoints([state.placement.drawnPoints[state.placement.drawnPoints.length - 1], state.placement.lineEnd], "rgba(0,0,0,0.25)", state.canvas);
+        drawLinesBetweenPoints(state.placement.drawnPoints, "black", state.canvas);
     }
     if (state.placement.currentlyPlacing == "points" && state.placement.pointerDown) {
         const timeDelta = (performance.now() - state.placement.lastPointerTime) / 1000;
@@ -205,6 +210,10 @@ document.getElementById("canvas").addEventListener("pointerdown", (e) => {
     state.placement.lineStart = state.placement.snapToGrid
         ? { x: roundByStep(e.offsetX, state.placement.roundX), y: roundByStep(e.offsetY, state.placement.roundY) }
         : { x: e.offsetX, y: e.offsetY };
+    if (state.placement.currentlyPlacing == "continuous") {
+        state.placement.lastPointerPosition = state.placement.lineStart;
+        state.placement.drawnPoints.push(state.placement.lineStart);
+    }
     if (state.placement.currentlyPlacing == "points") {
         state.placement.lastPointerTime = performance.now();
         state.placement.lastPointerPosition = state.placement.lineStart;
@@ -216,8 +225,8 @@ document.getElementById("canvas").addEventListener("pointermove", (e) => {
         ? { x: roundByStep(e.offsetX, state.placement.roundX), y: roundByStep(e.offsetY, state.placement.roundY) }
         : { x: e.offsetX, y: e.offsetY };
     if (state.placement.currentlyPlacing == "continuous" && state.placement.pointerDown) {
-        if (vectorMagnitude(vectorDifference(state.placement.lineStart, state.placement.lineEnd)) > state.canvas.dimensions.x / 10) {
-            state.objects.polygons.push(generateRectangleFromCenterline([state.placement.lineStart, state.placement.lineEnd], state.placement.lineThickness));
+        if (vectorMagnitude(vectorDifference(state.placement.lineStart, state.placement.lineEnd)) > state.canvas.dimensions.x / 100) {
+            state.placement.drawnPoints.push(state.placement.lineEnd);
             state.placement.lineStart = state.placement.lineEnd;
         }
     }
@@ -247,10 +256,18 @@ document.getElementById("canvas").addEventListener("pointerup", (e) => {
         const ball = new Ball(state.placement.lineStart, { x: velocity.x * velocityScale, y: velocity.y * velocityScale }, { x: 0, y: state.physics.gravity }, state.objects.ballRadius, "black");
         state.objects.balls.push(ball);
     }
+    if (state.placement.currentlyPlacing == "continuous") {
+        state.placement.drawnPoints.push(state.placement.lineEnd);
+        if (state.placement.drawnPoints.length > 1) {
+            state.objects.polygons.push(new Polygon({ x: 0, y: 0 }, state.placement.drawnPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0, false));
+        }
+        console.log(state.placement.drawnPoints.length);
+        state.placement.drawnPoints = [];
+    }
     if (state.placement.currentlyPlacing == "points") {
         state.placement.drawnPoints.push(state.placement.lineEnd);
         if (state.placement.drawnPoints.length > 1) {
-            state.objects.polygons.push(new Polygon({ x: 0, y: 0 }, state.placement.drawnPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0));
+            state.objects.polygons.push(new Polygon({ x: 0, y: 0 }, state.placement.drawnPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0, true));
         }
         console.log(state.placement.drawnPoints.length);
         state.placement.drawnPoints = [];
