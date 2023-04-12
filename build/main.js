@@ -90,6 +90,16 @@ const drawPlacingBall = (lineStart, lineEnd, radius, canvas) => {
     canvas.ctx.closePath();
     canvas.ctx.stroke();
 };
+const drawLinesBetweenPoints = (points, color, canvas) => {
+    canvas.ctx.strokeStyle = color;
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 0; i < points.length; i++) {
+        canvas.ctx.lineTo(points[i].x, points[i].y);
+    }
+    canvas.ctx.stroke();
+    canvas.ctx.closePath();
+};
 const initializeCanvas = () => {
     const canvasElement = document.getElementById("canvas");
     const c = {
@@ -131,6 +141,16 @@ function animationLoop() {
         const lineThickness = 10;
         const rectangle = generateRectangleFromCenterline([state.placement.lineStart, state.placement.lineEnd], lineThickness);
         rectangle.draw(state.canvas);
+    }
+    if (state.placement.currentlyPlacing == "points" && state.placement.pointerDown) {
+        const timeDelta = (performance.now() - state.placement.lastPointerTime) / 1000;
+        if (timeDelta >= 0.1) {
+            drawLinesBetweenPoints([state.placement.drawnPoints[state.placement.drawnPoints.length - 1], state.placement.lineEnd], "black", state.canvas);
+        }
+        else {
+            drawLinesBetweenPoints([state.placement.drawnPoints[state.placement.drawnPoints.length - 1], state.placement.lineEnd], "rgba(0,0,0,0.25)", state.canvas);
+        }
+        drawLinesBetweenPoints(state.placement.drawnPoints, "black", state.canvas);
     }
     requestAnimationFrame(animationLoop);
 }
@@ -185,6 +205,11 @@ document.getElementById("canvas").addEventListener("pointerdown", (e) => {
     state.placement.lineStart = state.placement.snapToGrid
         ? { x: roundByStep(e.offsetX, state.placement.roundX), y: roundByStep(e.offsetY, state.placement.roundY) }
         : { x: e.offsetX, y: e.offsetY };
+    if (state.placement.currentlyPlacing == "points") {
+        state.placement.lastPointerTime = performance.now();
+        state.placement.lastPointerPosition = state.placement.lineStart;
+        state.placement.drawnPoints.push(state.placement.lineStart);
+    }
 });
 document.getElementById("canvas").addEventListener("pointermove", (e) => {
     state.placement.lineEnd = state.placement.snapToGrid
@@ -195,6 +220,15 @@ document.getElementById("canvas").addEventListener("pointermove", (e) => {
             state.objects.polygons.push(generateRectangleFromCenterline([state.placement.lineStart, state.placement.lineEnd], state.placement.lineThickness));
             state.placement.lineStart = state.placement.lineEnd;
         }
+    }
+    if (state.placement.currentlyPlacing == "points" && state.placement.pointerDown) {
+        const timeDeltaSeconds = (performance.now() - state.placement.lastPointerTime) / 1000;
+        if (timeDeltaSeconds >= 0.1) {
+            state.placement.drawnPoints.push(state.placement.lastPointerPosition);
+            state.placement.lineStart = state.placement.lastPointerPosition;
+        }
+        state.placement.lastPointerPosition = state.placement.lineEnd;
+        state.placement.lastPointerTime = performance.now();
     }
 });
 document.getElementById("canvas").addEventListener("pointerup", (e) => {
@@ -212,6 +246,14 @@ document.getElementById("canvas").addEventListener("pointerup", (e) => {
         const velocityScale = Math.log(vectorMagnitude(velocity) + 0.0001);
         const ball = new Ball(state.placement.lineStart, { x: velocity.x * velocityScale, y: velocity.y * velocityScale }, { x: 0, y: state.physics.gravity }, state.objects.ballRadius, "black");
         state.objects.balls.push(ball);
+    }
+    if (state.placement.currentlyPlacing == "points") {
+        state.placement.drawnPoints.push(state.placement.lineEnd);
+        if (state.placement.drawnPoints.length > 1) {
+            state.objects.polygons.push(new Polygon({ x: 0, y: 0 }, state.placement.drawnPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0));
+        }
+        console.log(state.placement.drawnPoints.length);
+        state.placement.drawnPoints = [];
     }
 });
 document.getElementById("start").addEventListener("click", () => {

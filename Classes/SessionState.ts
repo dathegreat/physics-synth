@@ -16,6 +16,10 @@ export class SessionState{
     placement: {
         lineStart: Point
         lineEnd: Point
+        drawnPoints: Point[]
+        pointerSpeed: number
+        lastPointerPosition: Point
+        lastPointerTime: number
         lineThickness: number
         currentlyPlacing: string
         pointerDown: boolean
@@ -50,6 +54,10 @@ export class SessionState{
         this.placement = {
             lineStart : {x: 0, y: 0},
             lineEnd : {x: 0, y: 0},
+            drawnPoints : [],
+            lastPointerPosition: {x:0,y:0},
+            pointerSpeed : 0,
+            lastPointerTime : 0,
             lineThickness: 10,
             currentlyPlacing : "ball",
             pointerDown : false,

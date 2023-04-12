@@ -2,7 +2,6 @@
 //TODO: add custom selection to scale, upon selecting "custom" another option box appears with scale selection features
 //TODO: Make snap to grid a regular checkbox
 //TODO: despawn balls when they leave the bottom of frame
-//TODO: add point drawing mode to make irregular polygons
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
 
@@ -105,6 +104,17 @@ const drawPlacingBall = (lineStart: Point, lineEnd: Point, radius: number, canva
 	canvas.ctx.stroke()
 }
 
+const drawLinesBetweenPoints = (points: Point[], color: string, canvas: Canvas) =>{
+	canvas.ctx.strokeStyle = color
+	canvas.ctx.beginPath()
+	canvas.ctx.moveTo(points[0].x, points[0].y)
+	for(let i=0; i<points.length; i++){
+		canvas.ctx.lineTo(points[i].x, points[i].y)
+	}
+	canvas.ctx.stroke()
+	canvas.ctx.closePath()
+}
+
 const initializeCanvas = () =>{
 	const canvasElement = <HTMLCanvasElement> document.getElementById("canvas")
 	const c: any = {
@@ -171,6 +181,16 @@ function animationLoop(){
 		const rectangle = generateRectangleFromCenterline([state.placement.lineStart, state.placement.lineEnd], lineThickness)
 		rectangle.draw(state.canvas)
 	}
+	if(state.placement.currentlyPlacing == "points" && state.placement.pointerDown){
+		const timeDelta = (performance.now() - state.placement.lastPointerTime) / 1000
+		if(timeDelta >= 0.1){
+			drawLinesBetweenPoints([state.placement.drawnPoints[state.placement.drawnPoints.length - 1], state.placement.lineEnd], "black", state.canvas)
+		}else{
+			drawLinesBetweenPoints([state.placement.drawnPoints[state.placement.drawnPoints.length - 1], state.placement.lineEnd], "rgba(0,0,0,0.25)", state.canvas)
+		}
+		drawLinesBetweenPoints(state.placement.drawnPoints, "black", state.canvas)
+		
+	}
     requestAnimationFrame( animationLoop )
 }
 
@@ -229,6 +249,11 @@ document.getElementById("canvas").addEventListener("pointerdown", (e)=>{
 	state.placement.lineStart = state.placement.snapToGrid 
 		? {x: roundByStep(e.offsetX, state.placement.roundX), y: roundByStep(e.offsetY, state.placement.roundY)} 
 		: {x: e.offsetX, y: e.offsetY}
+	if(state.placement.currentlyPlacing == "points"){
+		state.placement.lastPointerTime = performance.now()
+		state.placement.lastPointerPosition = state.placement.lineStart
+		state.placement.drawnPoints.push(state.placement.lineStart)
+	}
 })
 
 document.getElementById("canvas").addEventListener("pointermove", (e)=>{
@@ -242,6 +267,15 @@ document.getElementById("canvas").addEventListener("pointermove", (e)=>{
 			)
 			state.placement.lineStart = state.placement.lineEnd
 		}
+	}
+	if(state.placement.currentlyPlacing == "points" && state.placement.pointerDown){
+		const timeDeltaSeconds = (performance.now() - state.placement.lastPointerTime) / 1000
+		if(timeDeltaSeconds >= 0.1){
+			state.placement.drawnPoints.push(state.placement.lastPointerPosition)
+			state.placement.lineStart = state.placement.lastPointerPosition
+		}
+		state.placement.lastPointerPosition = state.placement.lineEnd
+		state.placement.lastPointerTime = performance.now()
 	}
 })
 
@@ -266,6 +300,16 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 			"black"
 		)
 		state.objects.balls.push(ball)
+	}
+	if(state.placement.currentlyPlacing == "points"){
+		state.placement.drawnPoints.push(state.placement.lineEnd)
+		if(state.placement.drawnPoints.length > 1){
+			state.objects.polygons.push(
+				new Polygon({x:0,y:0}, state.placement.drawnPoints, {x:0,y:0}, {x:0,y:0}, 0)
+			)
+		}
+		console.log(state.placement.drawnPoints.length)
+		state.placement.drawnPoints = []
 	}
 })
 
