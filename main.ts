@@ -4,7 +4,8 @@
 //TODO: despawn balls when they leave the bottom of frame
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
-
+//TODO: scrolling should affect number of sides if drawing regular polygon
+//TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
 import { SessionState } from "./Classes/SessionState.js"
 import { Ball } from "./Classes/Ball.js"

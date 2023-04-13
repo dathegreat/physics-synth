@@ -4,6 +4,7 @@
 //TODO: despawn balls when they leave the bottom of frame
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
+//TODO: fix radio button styling to be neumorphic
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js";
 import { SessionState } from "./Classes/SessionState.js";
 import { Ball } from "./Classes/Ball.js";
