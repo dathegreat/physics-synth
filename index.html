@@ -26,9 +26,47 @@
 				</select>
 			</div>
 			<div class="dropdown-wrapper" id="drawing-selector">
+				<svg><defs><clipPath id="circle-clip"><circle cx='400' cy='400' r='300'/></clipPath></defs></svg>
 				<label for="drawing-selector">Drawing:</label>
-				<input type="radio" id="ball" name="drawing" value="ball" class="button" checked></input>
-				<input type="radio" id="wall" name="drawing" value="wall" class="button"></input>
+				<div class="radio-option">
+					<input type="radio" id="ball" name="drawing" value="ball" checked></input>
+					<label for="ball">
+						Ball
+						<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<circle cx='400' cy='400' r='300'/>
+						</svg>
+					</label>
+				</div>
+				<div class="radio-option">
+					<input type="radio" id="wall" name="drawing" value="wall"></input>
+					<label for="wall">
+						Wall
+						<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<rect x="50" y="200" width='700' height='400'/>
+						</svg>
+					</label>
+				</div>
+				<div class="radio-option">
+					<input type="radio" id="continuous" name="drawing" value="continuous"></input>
+					<label for="continuous">
+						Freehand
+						<svg width="700pt" height="700pt" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="freehand">
+							<g>
+								<path id="svg_12" d="m183,97"/>
+  								<path id="svg_17" d="m241,74c-10,15 -191,255 -166,260c25,5 309,-286 330,-250c21,36 -266,462 -196,454c70,-8 451,-334 463,-306c12,28 -150,378 -168,377c-18,-1 -6,-21 -6,-22l149,-326c-275,207 -384,277 -414,295c-30,18 -60,-4 -59,-26c-14,-31 194,-395 210,-423c16,-28 -288,268 -327,248c-39,-20 135,-243 163,-281c22,-22 31,-15 21,0z"/>
+							</g>
+						</svg>
+					</label>
+				</div>
+				<div class="radio-option">
+					<input type="radio" id="points" name="drawing" value="points"></input>
+					<label for="points">
+						Polygon
+						<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<polygon points="683.1559480312317,605.7248383023656 291.84405196876844,732.8697807033038 50,400.00000000000006 291.8440519687683,67.13021929669628 683.1559480312316,194.27516169763433"/>
+						</svg>
+					</label>
+				</div>
 			</div>
 			<div class="dropdown-wrapper" id="snap-selector">
 				<label for="snap-selector">Snap to Grid?:</label>
@@ -48,7 +86,7 @@
 			<label id="fps">FPS: null</label>
 			<button id="start">START</button>
 			<button id="pause" style="display: none">PAUSE</button>
-			<button id="reset">RESET</button>
+			<button id="clear">CLEAR</button>
 		</div>
 		<div id="sound-settings" class="separator settings">
 			<div id="adsr" class="slider-wrapper">

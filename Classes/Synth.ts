@@ -2,6 +2,62 @@ import { KeyToTonic } from "../MusicConstants.js"
 import { Envelope, Canvas, Point } from "../Types.js"
 
 
+const drawADSR = (center: Point, size: Point, ADSR: Envelope, canvas: Canvas) =>{
+	const padding = 0.9
+	const halfHeight = size.y / 2
+	const halfWidth = size.x / 2
+	const leftCorner = {x: center.x - (halfWidth * padding), y: center.y - (halfHeight * padding)}
+	const rightCorner = {x: center.x + (halfWidth * padding), y: center.y + (halfHeight * padding)}
+	const totalDuration = ADSR.attack + ADSR.decay + ADSR.release
+	//normalize each segment width to percentage of graph width
+	const normA = (ADSR.attack / totalDuration) * (size.x * padding)
+	const normD = (ADSR.decay / totalDuration) * (size.x * padding)
+	const normR = (ADSR.release / totalDuration) * (size.x * padding)
+	//draw outline
+	canvas.ctx.beginPath()
+	canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	canvas.ctx.stroke()
+	//draw graph
+	canvas.ctx.moveTo(leftCorner.x, rightCorner.y)
+	canvas.ctx.lineTo(leftCorner.x + normA, leftCorner.y)
+	canvas.ctx.lineTo(leftCorner.x + normA + normD, (rightCorner.y) - (size.y * padding * ADSR.sustain))
+	canvas.ctx.lineTo(rightCorner.x, rightCorner.y)
+	canvas.ctx.stroke()
+	canvas.ctx.closePath()
+}
+
+const drawFilter = (center: Point, size: Point, cutoff: number, qValue: number, canvas: Canvas) =>{
+	const padding = 0.9
+	const halfHeight = size.y / 2
+	const halfWidth = size.x / 2
+	const leftCorner = {x: center.x - (halfWidth), y: center.y - (halfHeight * padding) + qValue}
+	const rightCorner = {x: center.x + (halfWidth * padding), y: center.y + (halfHeight * padding)}
+	const sqrtFrequency = Math.sqrt(cutoff)
+	const maxFrequency = 142 //sqrt of 20,000Hz 
+	//normalize each segment width to percentage of graph width
+	const normCutoff = (sqrtFrequency / maxFrequency) * size.x
+	const normQ = (qValue / 100) * size.y
+	//value at which volume is ~0
+	const trueCutoff = normCutoff * 2 
+	//clip output to bounding rect
+	canvas.ctx.save()
+	canvas.ctx.beginPath()
+	canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	canvas.ctx.clip()
+	//draw outline
+	canvas.ctx.beginPath()
+	canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)
+	canvas.ctx.stroke()
+	//draw graph
+	canvas.ctx.moveTo(leftCorner.x, leftCorner.y + normQ)
+	canvas.ctx.lineTo(leftCorner.x + normCutoff, leftCorner.y + normQ)
+	canvas.ctx.quadraticCurveTo(leftCorner.x + normCutoff + (trueCutoff / 4) - normQ, leftCorner.y - normQ, leftCorner.x + trueCutoff, rightCorner.y)
+	canvas.ctx.stroke()
+	canvas.ctx.closePath()
+	//remove clipping path from future drawings
+	canvas.ctx.restore()
+}
+
 export class Synth{
 	key: string
 	tonic: number
@@ -17,11 +73,8 @@ export class Synth{
 	filter: BiquadFilterNode
 	graphCenter: { x: number; y: number; };
 	graphSize: { x: number; y: number; };
-	drawADSR: any
-	drawFilter: any
 	
-	
-	constructor(key: string, mode: Object, scale: Array<number>, wave: OscillatorType, range: number[], volume: number, ADSR: Envelope, drawADSR, drawFilter){
+	constructor(key: string, mode: Object, scale: Array<number>, wave: OscillatorType, range: number[], volume: number, ADSR: Envelope){
 		this.key = key
 		this.tonic = KeyToTonic[key] * Math.pow(2, range[0])
 		this.mode = mode
@@ -39,8 +92,6 @@ export class Synth{
 		this.filter.frequency.exponentialRampToValueAtTime(10000, this.context.currentTime + 0.001)
 		this.filter.connect(this.volumeNode)
 		this.volumeNode.connect(this.context.destination)
-		this.drawADSR = drawADSR
-		this.drawFilter = drawFilter
 	}
 	generateNotes(){
 		const notes: number[] = []
@@ -76,9 +127,9 @@ export class Synth{
 		
 	}
 	
-	drawGraph(center: Point, size: Point){
-		this.drawADSR(center, size, this.ADSR)
-		this.drawFilter({x: center.x, y: center.y + size.y}, size, this.filter.frequency.value, this.filter.Q.value)
+	drawGraph(center: Point, size: Point, canvas: Canvas){
+		drawADSR(center, size, this.ADSR, canvas)
+		drawFilter({x: center.x, y: center.y + size.y}, size, this.filter.frequency.value, this.filter.Q.value, canvas)
 	}
 	
 	setGain(volume: number){
