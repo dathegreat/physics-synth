@@ -4,7 +4,8 @@
 //TODO: despawn balls when they leave the bottom of frame
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
-//TODO: fix radio button styling to be neumorphic
+//TODO: scrolling should affect number of sides if drawing regular polygon
+//TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js";
 import { SessionState } from "./Classes/SessionState.js";
 import { Ball } from "./Classes/Ball.js";
@@ -344,7 +345,30 @@ document.getElementById("mode").addEventListener("input", (e) => {
 });
 document.getElementById("scale").addEventListener("input", (e) => {
     const scaleInput = e.target;
+    if (scaleInput.value === "custom") {
+        document.getElementById("custom-scale").style.display = "flex";
+    }
+    else {
+        document.getElementById("custom-scale").style.display = "none";
+    }
     state.music.synth.scale = Scales[scaleInput.value];
+    state.music.synth.generateNotes();
+});
+document.getElementById("custom-scale").addEventListener("input", (e) => {
+    const customScaleInput = e.target;
+    const inputAsInt = parseInt(customScaleInput.value);
+    console.log(inputAsInt);
+    if (state.music.synth.scale.length == 1 && !customScaleInput.checked) {
+        customScaleInput.checked = true;
+        return;
+    }
+    if (!customScaleInput.checked && state.music.synth.scale.includes(inputAsInt)) {
+        state.music.synth.scale = state.music.synth.scale.filter(e => e !== inputAsInt);
+    }
+    if (customScaleInput.checked && !state.music.synth.scale.includes(inputAsInt)) {
+        console.log(state.music.synth.scale);
+        state.music.synth.scale.push(inputAsInt);
+    }
     state.music.synth.generateNotes();
 });
 document.getElementById("filter").addEventListener("input", (e) => {
