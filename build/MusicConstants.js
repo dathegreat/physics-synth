@@ -126,6 +126,7 @@ export const Scales = {
     sus2: [1, 2, 5],
     sus4: [1, 4, 5],
     "6/9": [1, 3, 5, 6, 9],
-    "jazz sus": [1, 4, 5, 9]
+    "jazz sus": [1, 4, 5, 9],
+    custom: [1]
 };
 //# sourceMappingURL=MusicConstants.js.map
