@@ -6,6 +6,8 @@
 //TODO: add optional lifespan to balls so they disappear after a certain # of hits
 //TODO: scrolling should affect number of sides if drawing regular polygon
 //TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
+//TODO: make each ball spawn in a different color
+//TODO: add ball trail, perhaps
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
 import { SessionState } from "./Classes/SessionState.js"
 import { Ball } from "./Classes/Ball.js"
