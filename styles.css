@@ -1,8 +1,9 @@
+/* https://coolors.co/26252d-1e5f71-737b6e-a47a50-524547 */
 :root {
-	--secondary: #1e5f71;
+	--secondary: #524547;
 	--olive: #173516;
 	--grey: #A0AFBE;
-	--primary: #524547;
+	--primary: #1e5f71;
 	--lightAccent: #C3D3E8;
 	--darkAccent: #26252d;
 }
@@ -204,12 +205,13 @@ body{
 	margin: 2em;
 	background-color: #737b6e;
 	background-image: linear-gradient(0deg, #737b6e 0%, #26252d 1%, #a47a50 42%, #737b6e 60%, #1e5f71 100%);
-
 }
 
 canvas{
 	border: none;
 	border-radius: 1em;
+	background-color: rgba(255, 255, 255, 0.1);
+	touch-action: none;
 }
 
 button{
@@ -345,7 +347,7 @@ input[type=range]::-moz-range-thumb {
   width: 10em;
   height: 1em;
   padding: 0.1em 0.1em;
-  background: var(--primary);
+  background: none;
   border-radius: 1em;
   box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
 }
@@ -361,8 +363,9 @@ input[type=range]::-moz-range-thumb {
 	top: -0.5em;
 	width: 2em;
 	height: 2em;
-	background-color: var(--secondary);
+	background-color: var(--primary);
 	background-image: linear-gradient(-45deg, rgba(255,255,255,0.2), transparent);
+	border: 1px solid var(--lightAccent);
 	border-radius: 1em;
 	box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.3);
 }

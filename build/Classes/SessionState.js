@@ -38,7 +38,8 @@ export class SessionState {
             synth: new Synth("A", Modes["major"], Scales["pentatonic"], "sine", [4, 5], 0.1, { attack: 0.01, decay: 0.1, sustain: 1, release: 0.5 }),
             graphSize: { x: this.canvas.dimensions.x * 0.2, y: this.canvas.dimensions.x * 0.1 },
             bpm: 120,
-            rhythm: 0
+            rhythm: 0,
+            minimumTriggerVelocity: 50
         };
         this.music.synth.generateNotes();
     }

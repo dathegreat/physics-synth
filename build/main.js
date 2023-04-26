@@ -174,7 +174,9 @@ function physicsLoop(callTime) {
         }
         const collision = physics.testGlobalCollision(state.objects.balls[i], state.objects.polygons, timeDelta, state);
         if (collision) {
-            state.music.synth.playRandomNote();
+            if (vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity) {
+                state.music.synth.playRandomNote();
+            }
             const bounceVector = physics.calculateBounce(state.objects.balls[i], lineToVector(collision), state);
             state.objects.balls[i].velocity = bounceVector;
             state.objects.balls[i].hitCount += 1;
@@ -278,7 +280,6 @@ document.getElementById("canvas").addEventListener("pointerup", (e) => {
         if (state.placement.drawnPoints.length > 1) {
             state.objects.polygons.push(new Polygon({ x: 0, y: 0 }, state.placement.drawnPoints, { x: 0, y: 0 }, { x: 0, y: 0 }, 0, true));
         }
-        console.log(state.placement.drawnPoints.length);
         state.placement.drawnPoints = [];
     }
 });
