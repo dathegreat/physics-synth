@@ -110,17 +110,23 @@ export class Synth{
 		return this.notes[randomIndex]
 	}
 	
-	playRandomNote(){
+	playRandomNote(panning?: number){
 		const osc = this.context.createOscillator();
 		const noteGain = this.context.createGain();
 		noteGain.gain.setValueAtTime(0.01, 0.0);
 		noteGain.gain.exponentialRampToValueAtTime(1.0, this.context.currentTime + this.ADSR.attack);
 		noteGain.gain.exponentialRampToValueAtTime(this.ADSR.sustain, this.context.currentTime + this.ADSR.attack + this.ADSR.decay);
 		noteGain.gain.exponentialRampToValueAtTime(0.0001, this.context.currentTime + this.ADSR.attack + this.ADSR.decay + this.ADSR.release);
-
 		osc.type = this.wave;
 		osc.frequency.setValueAtTime(this.getRandomNote(), 0);
-		osc.connect(noteGain);
+		if(panning){
+			const panNode = this.context.createStereoPanner()
+			panNode.pan.exponentialRampToValueAtTime(panning, 0)
+			osc.connect(panNode)
+			panNode.connect(noteGain)
+		}else{
+			osc.connect(noteGain);
+		}
 		noteGain.connect(this.filter)
 		osc.start();
 		osc.stop(this.context.currentTime + this.ADSR.attack + this.ADSR.decay + this.ADSR.release);

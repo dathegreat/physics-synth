@@ -1,11 +1,10 @@
-//TODO: add symmetry mode to ball placement, mirrored across center x or y axis
 //TODO: Make snap to grid a regular checkbox
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: scrolling should affect number of sides if drawing regular polygon
 //TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
-//TODO: make each ball spawn in a different color
 //TODO: add ball trail, perhaps
 //TODO: add quantize time option
+//TODO: add option to save current state and reload old states
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js";
 import { SessionState } from "./Classes/SessionState.js";
 import { Ball } from "./Classes/Ball.js";
@@ -175,7 +174,9 @@ function physicsLoop(callTime) {
         const collision = physics.testGlobalCollision(state.objects.balls[i], state.objects.polygons, timeDelta, state);
         if (collision) {
             if (vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity) {
-                state.music.synth.playRandomNote();
+                const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2);
+                console.log(positionInStereoField);
+                state.music.synth.playRandomNote(positionInStereoField);
             }
             const bounceVector = physics.calculateBounce(state.objects.balls[i], lineToVector(collision), state);
             state.objects.balls[i].velocity = bounceVector;
