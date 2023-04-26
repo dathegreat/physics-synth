@@ -22,3 +22,8 @@ export interface Envelope{
     sustain: number
     release: number
 }
+
+export interface Color{
+    name: string
+    RGBA: string
+}

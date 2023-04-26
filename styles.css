@@ -1,10 +1,10 @@
 :root {
-	--green: #0c8d6b;
+	--secondary: #1e5f71;
 	--olive: #173516;
 	--grey: #A0AFBE;
-	--blue: #2D73C1;
-	--lightblue: #C3D3E8;
-	--darkblue: #1C4778;
+	--primary: #524547;
+	--lightAccent: #C3D3E8;
+	--darkAccent: #26252d;
 }
 
 #bounce{
@@ -38,11 +38,11 @@
 }
 
 .scale-select > label:hover{
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 .scale-select > input:checked + label{
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 .checkbox-wrapper{
@@ -52,11 +52,11 @@
   	height: 1em;
 	width: 2em;
   	border-radius: 1em;
-  	box-shadow: inset -0.1em -0.1em 0.1em var(--lightblue), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+  	box-shadow: inset -0.1em -0.1em 0.1em var(--lightAccent), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
 	margin-right: 1em;
 }
 
-#snap{
+.checkbox-wrapper > .button{
 	appearance: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -64,21 +64,21 @@
 	width: 1.5em;
 	border: 0.1em solid var(--grey);
 	border-radius: 1em;
-	background-color: var(--blue);
-	box-shadow: inset -0.05em -0.05em 0.1em var(--lightblue), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+	background-color: var(--primary);
+	box-shadow: inset -0.05em -0.05em 0.1em var(--lightAccent), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
 	transform: translate(-1em, 0) rotateY(10deg);
 	transition: transform 0.1s linear;
 	
 }
 
-#snap:hover{
+.checkbox-wrapper > .button:hover{
 	cursor: pointer;
 }
 
-#snap:checked{
-	background-color: var(--darkblue);
+.checkbox-wrapper > .button:checked{
+	background-color: var(--darkAccent);
 	border-radius: 1em;
-	box-shadow: -0.1em 0.1em 0.2em var(--lightblue), inset -0.1em -0.1em 0.2em rgba(0, 0, 0, 0.5);
+	box-shadow: -0.1em 0.1em 0.2em var(--lightAccent), inset -0.1em -0.1em 0.2em rgba(0, 0, 0, 0.5);
 	transform: translate(1.1em, 0);
 }
 
@@ -90,8 +90,8 @@ input[type="radio"]{
 }
 
 input[type="radio"]:hover + label{
-	border-color: var(--darkblue);
-	background-color: var(--darkblue);
+	border-color: var(--darkAccent);
+	background-color: var(--darkAccent);
 	cursor: pointer;
 }
 
@@ -100,31 +100,31 @@ input[type="radio"]:hover + label > svg{
 }
 
 input[type="radio"]:active + label > svg{
-	fill: var(--darkblue);
+	fill: var(--darkAccent);
 	cursor: pointer;
 }
 
 input[type="radio"]:checked{
-	border-color: var(--darkblue);
+	border-color: var(--darkAccent);
 	box-shadow: inset -0.2em -0.2em 0.1em var(--grey), inset 0.2em 0.2em 0.1em rgba(0, 0, 0, 0.5);
 }
 
 input[type="radio"]:checked + label > svg{
-	fill: var(--darkblue);
-	stroke: var(--blue);
+	fill: var(--darkAccent);
+	stroke: var(--primary);
 	filter: drop-shadow(-0.1em -0.1em 0.2em rgba(0, 0, 0, 0.5)) 
-	drop-shadow(0.1em 0.1em 0.2em var(--lightblue));
+	drop-shadow(0.1em 0.1em 0.2em var(--lightAccent));
 }
 
 input[type="radio"]:checked + label > .freehand{
-	stroke: var(--darkblue);
+	stroke: var(--darkAccent);
 	fill: none;
 }
 
 .freehand{
-	fill: var(--blue);
+	fill: var(--primary);
 	stroke-width: 1em;
-	stroke: var(--lightblue);
+	stroke: var(--lightAccent);
 }
 
 svg {
@@ -132,10 +132,10 @@ svg {
 	width: 1.5em;
 	height: 1.5em;
     pointer-events: none;
-	fill: var(--blue);
-	stroke: var(--lightblue);
+	fill: var(--primary);
+	stroke: var(--lightAccent);
 	stroke-width: 1em;
-	filter: drop-shadow(-0.05em -0.05em 0.1em var(--lightblue)) drop-shadow(0.1em 0.1em 0.1em rgba(0, 0, 0, 0.75));
+	filter: drop-shadow(-0.05em -0.05em 0.1em var(--lightAccent)) drop-shadow(0.1em 0.1em 0.1em rgba(0, 0, 0, 0.75));
 	transition: fill linear 0.1s;
 }
 
@@ -151,7 +151,7 @@ svg {
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 	border-radius: 0.1em;
-  	box-shadow: inset -0.1em -0.1em 0.1em var(--lightblue), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+  	box-shadow: inset -0.1em -0.1em 0.1em var(--lightAccent), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
 }
 
 .radio-option > label{
@@ -170,19 +170,19 @@ svg {
 	padding: 0.2em 0.1em;
 	border: none;
 	border-radius: 0.2em;
-	box-shadow: inset -0.05em -0.05em 0.1em var(--lightblue), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+	box-shadow: inset -0.05em -0.05em 0.1em var(--lightAccent), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
 	text-align: center;
-	background-color: var(--blue)
+	background-color: var(--primary)
 }
 
 .number-input:focus{
 	outline: none;
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 .number-input:hover{
 	outline: none;
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 .number-input-wrapper{
@@ -190,11 +190,11 @@ svg {
 	flex-direction: row;
 	align-items: center;
 	border-radius: 0.2em;
-	box-shadow: inset -0.05em -0.05em 0.1em var(--lightblue), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+	box-shadow: inset -0.05em -0.05em 0.1em var(--lightAccent), inset 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
 }
 
 .number-input-wrapper:hover{
-	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.1em 0.1em 0.1em var(--lightblue);
+	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.1em 0.1em 0.1em var(--lightAccent);
 }
 
 body{
@@ -202,11 +202,12 @@ body{
 	justify-content: center;
 	padding: 0em;
 	margin: 2em;
-	background-color: var(--blue);
+	background-color: #737b6e;
+	background-image: linear-gradient(0deg, #737b6e 0%, #26252d 1%, #a47a50 42%, #737b6e 60%, #1e5f71 100%);
+
 }
 
 canvas{
-	background-color: var(--green);
 	border: none;
 	border-radius: 1em;
 }
@@ -221,19 +222,19 @@ button{
 	height: 2em;
 	padding: 0.1em 0.1em;
 	margin: 0.2em;
-	background-color: var(--blue);
+	background-color: var(--primary);
 	border: none;
 	border-radius: 1em;
-	box-shadow: -0.1em -0.1em 0.2em var(--lightblue), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
+	box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
 	transition: box-shadow linear 0.1s;
 }
 
 button:hover{
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 button:active{
-	box-shadow: -0.1em -0.1em 0.2em rgba(0, 0, 0, 0.5), 0.1em 0.1em 0.2em var(--lightblue);
+	box-shadow: -0.1em -0.1em 0.2em rgba(0, 0, 0, 0.5), 0.1em 0.1em 0.2em var(--lightAccent);
 }
 
 .main-screen{
@@ -246,7 +247,6 @@ button:active{
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
-	background-color: var(--blue);
 }
 
 .dropdown-wrapper{
@@ -257,17 +257,17 @@ button:active{
 	border: none;
 	padding: 0.2em 0.1em;
 	border-radius: 0.2em;
-	box-shadow: inset -0.05em -0.05em 0.1em var(--lightblue), inset 0.12em 0.12em 0.1em rgba(0, 0, 0, 0.5);
+	box-shadow: inset -0.05em -0.05em 0.1em var(--lightAccent), inset 0.12em 0.12em 0.1em rgba(0, 0, 0, 0.5);
 	text-align: center;
 	transition: background-color 0.5s, box-shadow 0.5s;
 }
 
 .dropdown-wrapper:hover{
-	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.12em 0.12em 0.1em var(--lightblue);
+	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.12em 0.12em 0.1em var(--lightAccent);
 }
 
 .dropdown-wrapper:hover > .dropdown{
-	background-color: var(--darkblue);
+	background-color: var(--darkAccent);
 }
 
 .dropdown{
@@ -282,14 +282,14 @@ button:active{
 	border: none;
 	height: 100%;
 	width: 50%;
-	background-color: var(--blue);
+	background-color: var(--primary);
 	transition: background-color 0.5s, box-shadow 0.5s;
 }
 
 .dropdown:hover{
 	cursor: pointer;
-	background-color: var(--darkblue);
-	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.12em 0.12em 0.1em var(--lightblue);
+	background-color: var(--darkAccent);
+	box-shadow: inset -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.5), inset 0.12em 0.12em 0.1em var(--lightAccent);
 }
 
 .dropdown:focus{
@@ -304,7 +304,6 @@ button:active{
 
 .settings{
 	display: flex;
-	background-color: var(--blue);
 	align-items: center;
 }
 
@@ -346,42 +345,42 @@ input[type=range]::-moz-range-thumb {
   width: 10em;
   height: 1em;
   padding: 0.1em 0.1em;
-  background: var(--blue);
+  background: var(--primary);
   border-radius: 1em;
-  box-shadow: -0.1em -0.1em 0.2em var(--lightblue), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
+  box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
 }
 .slider::-webkit-slider-runnable-track {
   display: flex;
   align-items: center;
   height: 1em;
   border-radius: 1em;
-  box-shadow: inset -0.1em -0.1em 0.1em var(--lightblue), inset .2em 0.3em .4em rgba(0, 0, 0, 0.5);
+  box-shadow: inset -0.1em -0.1em 0.1em var(--lightAccent), inset .2em 0.3em .4em rgba(0, 0, 0, 0.5);
 }
 .slider::-webkit-slider-thumb {
 	position: relative;
 	top: -0.5em;
 	width: 2em;
 	height: 2em;
-	background-color: var(--green);
+	background-color: var(--secondary);
 	background-image: linear-gradient(-45deg, rgba(255,255,255,0.2), transparent);
 	border-radius: 1em;
-	box-shadow: -0.1em -0.1em 0.2em var(--lightblue), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.3);
+	box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.3);
 }
 .slider::-moz-range-track {
   display: flex;
   align-items: center;
   height: 2em;
   border-radius: 1em;
-  box-shadow: inset -0.5em -0.5em 0.5em var(--lightblue), inset .2em 0.3em .4em rgba(0, 0, 0, 0.5);
+  box-shadow: inset -0.5em -0.5em 0.5em var(--lightAccent), inset .2em 0.3em .4em rgba(0, 0, 0, 0.5);
 }
 .slider::-moz-range-thumb {
   position: relative;
   width: 2em;
   height: 2em;
-  background-color: var(--blue);
+  background-color: var(--primary);
   background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.5), transparent);
   border-radius: 50%;
-  box-shadow: -0.1em -0.1em 0.2em var(--lightblue), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.3);
+  box-shadow: -0.1em -0.1em 0.2em var(--lightAccent), 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.3);
 }
 
 .slider-wrapper{

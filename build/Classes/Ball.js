@@ -1,8 +1,11 @@
+import { getNextColor } from "./Colors.js";
 const drawBall = (ball, canvas) => {
-    canvas.ctx.fillStyle = ball.color;
+    canvas.ctx.fillStyle = `rgba(${ball.color.RGBA})`;
+    canvas.ctx.strokeStyle = "black";
     canvas.ctx.beginPath();
     canvas.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2);
     canvas.ctx.closePath();
+    canvas.ctx.stroke();
     canvas.ctx.fill();
 };
 export const generateBalls = (amount, centers, velocity, acceleration, radius, color) => {
@@ -19,7 +22,8 @@ export class Ball {
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.radius = radius;
-        this.color = color;
+        this.color = color ? color : getNextColor();
+        this.hitCount = 0;
     }
     getNextPosition(timeDelta) {
         return {
