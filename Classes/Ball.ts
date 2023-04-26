@@ -1,14 +1,17 @@
-import { Canvas, Drawable, Point } from "../Types.js"
+import { Canvas, Drawable, Point, Color } from "../Types.js"
+import { getNextColor } from "./Colors.js"
 
 const drawBall = (ball: Ball, canvas: Canvas) =>{
-    canvas.ctx.fillStyle = ball.color
+    canvas.ctx.fillStyle = `rgba(${ball.color.RGBA})`
+    canvas.ctx.strokeStyle = "black"
     canvas.ctx.beginPath()
     canvas.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2)
     canvas.ctx.closePath()
+    canvas.ctx.stroke()
     canvas.ctx.fill()
 }
 
-export const generateBalls = (amount: number, centers: Point[], velocity: Point, acceleration: Point, radius: number, color: string ): Ball[] =>{
+export const generateBalls = (amount: number, centers: Point[], velocity: Point, acceleration: Point, radius: number, color: Color ): Ball[] =>{
     const balls: Ball[] = []
     for(let i=0; i<amount; i++){
         const ball: Ball = new Ball(centers[i], velocity, acceleration, radius, color)
@@ -22,14 +25,16 @@ export class Ball implements Drawable{
     velocity: Point
     acceleration: Point
     radius: number
-    color: string
+    color: Color
+    hitCount: number
 
-    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color: string){
+    constructor(center: Point, velocity: Point, acceleration: Point, radius: number, color?: Color){
         this.center = center
         this.velocity = velocity
         this.acceleration = acceleration
         this.radius = radius
-        this.color = color
+        this.color = color ? color : getNextColor()
+        this.hitCount = 0
     }   
 	
 	getNextPosition(timeDelta: number){

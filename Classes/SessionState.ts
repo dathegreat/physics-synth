@@ -35,12 +35,14 @@ export class SessionState{
         polygons: Polygon[]
         balls: Ball[]
         ballRadius: number
+        maximumHitCount: number
     }
     music: {
         synth: Synth
         bpm: number
         rhythm: number
         graphSize: Point
+        minimumTriggerVelocity: number
     }
     constructor(canvas: Canvas){
         this.canvas = {
@@ -73,12 +75,14 @@ export class SessionState{
             polygons: new Array<Polygon>,
             balls: new Array<Ball>,
             ballRadius: ((this.canvas.dimensions.x + this.canvas.dimensions.y) / 2) * 0.01,
+            maximumHitCount: Infinity
         }
         this.music = {
             synth: new Synth("A", Modes["major"], Scales["pentatonic"], "sine", [4,5], 0.1, {attack: 0.01, decay: 0.1, sustain: 1, release: 0.5}),
             graphSize: {x: this.canvas.dimensions.x * 0.2, y: this.canvas.dimensions.x * 0.1},
             bpm: 120,
-            rhythm: 0
+            rhythm: 0,
+            minimumTriggerVelocity: 50
         }
 
         this.music.synth.generateNotes()

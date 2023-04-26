@@ -1,11 +1,10 @@
-//TODO: add symmetry mode to ball placement, mirrored across center x or y axis
-//TODO: add custom selection to scale, upon selecting "custom" another option box appears with scale selection features
 //TODO: Make snap to grid a regular checkbox
-//TODO: despawn balls when they leave the bottom of frame
 //TODO: add polygon drawing mode to make regular polygons
-//TODO: add optional lifespan to balls so they disappear after a certain # of hits
 //TODO: scrolling should affect number of sides if drawing regular polygon
 //TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
+//TODO: add ball trail, perhaps
+//TODO: add quantize time option
+//TODO: add option to save current state and reload old states
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
 import { SessionState } from "./Classes/SessionState.js"
 import { Ball } from "./Classes/Ball.js"
@@ -209,13 +208,20 @@ function physicsLoop(callTime){
 		state.objects.polygons[i].step(timeDelta)
 	}
     for(let i=0; i<state.objects.balls.length; i++){
-        state.objects.balls[i].color = "black"
+		if(state.objects.balls[i].hitCount >= state.objects.maximumHitCount || state.objects.balls[i].center.y > state.canvas.dimensions.y){
+			state.objects.balls.splice(i, 1)
+			continue;
+		}
 		const collision = physics.testGlobalCollision(state.objects.balls[i], state.objects.polygons, timeDelta, state)
 		if( collision ){
-			state.music.synth.playRandomNote()
+			if( vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity){
+				const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2)
+				console.log(positionInStereoField)
+				state.music.synth.playRandomNote(positionInStereoField)
+			}
 			const bounceVector = physics.calculateBounce( state.objects.balls[i], lineToVector(<Point[]> collision), state)
 			state.objects.balls[i].velocity = bounceVector
-			state.objects.balls[i].color = "blue"
+			state.objects.balls[i].hitCount += 1
 		}
 		state.objects.balls[i].step(timeDelta)
     }
@@ -244,6 +250,12 @@ document.getElementById("snap").addEventListener("change", (e)=>{
 	const snapInput = e.target as HTMLInputElement
 	state.placement.snapToGrid = snapInput.checked
 })
+
+document.getElementById("ball-life").addEventListener("change", (e)=>{
+	const immortalBallsInput = e.target as HTMLInputElement
+	state.objects.maximumHitCount = immortalBallsInput.checked ? Infinity : 1
+})
+
 document.getElementById("drawing-selector").addEventListener("change", (e)=>{
 	const drawingInput = e.target as HTMLInputElement
 	state.placement.currentlyPlacing = drawingInput.value
@@ -306,8 +318,7 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 			state.placement.lineStart, 
 			{x: velocity.x * velocityScale, y: velocity.y * velocityScale}, 
 			{x: 0, y: state.physics.gravity}, 
-			state.objects.ballRadius, 
-			"black"
+			state.objects.ballRadius
 		)
 		state.objects.balls.push(ball)
 	}
@@ -328,7 +339,6 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 				new Polygon({x:0,y:0}, state.placement.drawnPoints, {x:0,y:0}, {x:0,y:0}, 0, true)
 			)
 		}
-		console.log(state.placement.drawnPoints.length)
 		state.placement.drawnPoints = []
 	}
 })
