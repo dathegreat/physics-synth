@@ -5,12 +5,14 @@
 //TODO: add ball trail, perhaps
 //TODO: add quantize time option
 //TODO: add option to save current state and reload old states
-import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
-import { SessionState } from "./Classes/SessionState.js"
-import { Ball } from "./Classes/Ball.js"
-import { Point, Canvas, Drawable, Envelope } from "./Types.js"
-import { Modes, Scales, KeyToTonic } from "./MusicConstants.js"
-import { Physics, vectorMagnitude } from "./Classes/Physics.js"
+//TODO: add ball spawn mechanic where MIDI key places ball at current mouse location
+import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "../Classes/Polygon"
+import { SessionState } from "../Classes/SessionState"
+import { Ball } from "../Classes/Ball"
+import { Point, Canvas, Drawable, Envelope } from "../Types"
+import { Modes, Scales, KeyToTonic } from "../MusicConstants"
+import { Physics, vectorMagnitude } from "../Classes/Physics"
+import { MidiHandler } from "../Classes/MidiHandler"
 
 let state: any;
 const physics = new Physics();
@@ -127,6 +129,8 @@ const initializeCanvas = () =>{
 	c.element.width = state.canvas.dimensions.x
 	c.element.height = state.canvas.dimensions.y
 
+	const midiHandler = new MidiHandler()
+
 	const polygonStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
 		state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 : state.canvas.dimensions.y * 0.45, 
@@ -216,8 +220,7 @@ function physicsLoop(callTime){
 		if( collision ){
 			if( vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity){
 				const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2)
-				console.log(positionInStereoField)
-				state.music.synth.playRandomNote(positionInStereoField)
+				state.music.synth.playNote(state.objects.balls[i].frequency, positionInStereoField)
 			}
 			const bounceVector = physics.calculateBounce( state.objects.balls[i], lineToVector(<Point[]> collision), state)
 			state.objects.balls[i].velocity = bounceVector
@@ -318,7 +321,8 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 			state.placement.lineStart, 
 			{x: velocity.x * velocityScale, y: velocity.y * velocityScale}, 
 			{x: 0, y: state.physics.gravity}, 
-			state.objects.ballRadius
+			state.objects.ballRadius,
+			state.music.synth.getRandomNote()
 		)
 		state.objects.balls.push(ball)
 	}

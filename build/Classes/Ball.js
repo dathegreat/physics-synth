@@ -8,22 +8,23 @@ const drawBall = (ball, canvas) => {
     canvas.ctx.stroke();
     canvas.ctx.fill();
 };
-export const generateBalls = (amount, centers, velocity, acceleration, radius, color) => {
+export const generateBalls = (amount, centers, velocity, acceleration, radius, color, frequencies) => {
     const balls = [];
     for (let i = 0; i < amount; i++) {
-        const ball = new Ball(centers[i], velocity, acceleration, radius, color);
+        const ball = new Ball(centers[i], velocity, acceleration, radius, frequencies[i], color);
         balls.push(ball);
     }
     return balls;
 };
 export class Ball {
-    constructor(center, velocity, acceleration, radius, color) {
+    constructor(center, velocity, acceleration, radius, frequency, color) {
         this.center = center;
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.radius = radius;
         this.color = color ? color : getNextColor();
         this.hitCount = 0;
+        this.frequency = frequency;
     }
     getNextPosition(timeDelta) {
         return {
