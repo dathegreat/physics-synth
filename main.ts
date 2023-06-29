@@ -5,6 +5,7 @@
 //TODO: add ball trail, perhaps
 //TODO: add quantize time option
 //TODO: add option to save current state and reload old states
+//TODO: add controller ball that randomly changes its respective setting on impact
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
 import { SessionState } from "./Classes/SessionState.js"
 import { Ball } from "./Classes/Ball.js"
