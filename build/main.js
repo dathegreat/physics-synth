@@ -5,6 +5,7 @@
 //TODO: add ball trail, perhaps
 //TODO: add quantize time option
 //TODO: add option to save current state and reload old states
+//TODO: add ball spawn mechanic where MIDI key places ball at current mouse location
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js";
 import { SessionState } from "./Classes/SessionState.js";
 import { Ball } from "./Classes/Ball.js";
@@ -175,8 +176,7 @@ function physicsLoop(callTime) {
         if (collision) {
             if (vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity) {
                 const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2);
-                console.log(positionInStereoField);
-                state.music.synth.playRandomNote(positionInStereoField);
+                state.music.synth.playNote(state.objects.balls[i].frequency, positionInStereoField);
             }
             const bounceVector = physics.calculateBounce(state.objects.balls[i], lineToVector(collision), state);
             state.objects.balls[i].velocity = bounceVector;
@@ -265,7 +265,7 @@ document.getElementById("canvas").addEventListener("pointerup", (e) => {
     if (state.placement.currentlyPlacing == "ball") {
         const velocity = { x: -(state.placement.lineEnd.x - state.placement.lineStart.x), y: -(state.placement.lineEnd.y - state.placement.lineStart.y) };
         const velocityScale = Math.log(vectorMagnitude(velocity) + 0.0001);
-        const ball = new Ball(state.placement.lineStart, { x: velocity.x * velocityScale, y: velocity.y * velocityScale }, { x: 0, y: state.physics.gravity }, state.objects.ballRadius);
+        const ball = new Ball(state.placement.lineStart, { x: velocity.x * velocityScale, y: velocity.y * velocityScale }, { x: 0, y: state.physics.gravity }, state.objects.ballRadius, state.music.synth.getRandomNote());
         state.objects.balls.push(ball);
     }
     if (state.placement.currentlyPlacing == "continuous") {

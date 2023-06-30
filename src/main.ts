@@ -1,19 +1,21 @@
-//TODO: Make snap to grid a regular checkbox
 //TODO: add polygon drawing mode to make regular polygons
 //TODO: scrolling should affect number of sides if drawing regular polygon
 //TODO: add wave effect when balls contact wall...or something cool at least. Maybe balls color the wall?
 //TODO: add ball trail, perhaps
-//TODO: add quantize time option
 //TODO: add option to save current state and reload old states
+//TODO: add ball spawn mechanic where MIDI key places ball at current mouse location
+//TODO: add tutorial screen for first-time users
 //TODO: add controller ball that randomly changes its respective setting on impact
-import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "./Classes/Polygon.js"
-import { SessionState } from "./Classes/SessionState.js"
-import { Ball } from "./Classes/Ball.js"
-import { Point, Canvas, Drawable, Envelope } from "./Types.js"
-import { Modes, Scales, KeyToTonic } from "./MusicConstants.js"
-import { Physics, vectorMagnitude } from "./Classes/Physics.js"
+import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "../Classes/Polygon"
+import { SessionState } from "../Classes/SessionState"
+import { Ball } from "../Classes/Ball"
+import { Point, Canvas, Drawable, Envelope } from "../Types"
+import { Modes, Scales, KeyToTonic } from "../MusicConstants"
+import { Physics, vectorMagnitude } from "../Classes/Physics"
+import { MidiHandler } from "../Classes/MidiHandler"
+import { Spawner } from "../Classes/Spawner"
 
-let state: any;
+let state: SessionState;
 const physics = new Physics();
 
 const normalize = (value: number, min: number, max: number): number =>{
@@ -74,7 +76,7 @@ const generateSelectionOptions = (div: string, options: string[]) =>{
 			selectionDiv.innerHTML += `<option value="${options[i]}">${options[i]}</option>\n`
 		}
 	}else{
-		console.log(`div ${div} not found in generateSelectionOptions`)
+		console.log(`div ${div} not found in generateSelectionOptions()`)
 	}
 }
 
@@ -128,6 +130,8 @@ const initializeCanvas = () =>{
 	c.element.width = state.canvas.dimensions.x
 	c.element.height = state.canvas.dimensions.y
 
+	const midiHandler = new MidiHandler()
+
 	const polygonStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
 		state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 : state.canvas.dimensions.y * 0.45, 
@@ -144,7 +148,9 @@ const initializeCanvas = () =>{
 	const polygonThickness = 10
 	const polygonShellStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
-		state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 + polygonThickness : state.canvas.dimensions.y * 0.45 + polygonThickness, 
+		state.canvas.dimensions.x < state.canvas.dimensions.y 
+			? state.canvas.dimensions.x * 0.45 + polygonThickness 
+			: state.canvas.dimensions.y * 0.45 + polygonThickness, 
 		6, 
 		Math.PI / 2)
 	const polygonShell = new Polygon(
@@ -157,8 +163,13 @@ const initializeCanvas = () =>{
 	)
 
 	state.objects.polygons.push(polygon, polygonShell)
-	for( const polygon of state.objects.polygons){
+	const testSpawner = new Spawner(state.canvas.center, state.objects.ballRadius * 2)
+	state.objects.spawners.push(testSpawner)
+	for( const polygon of state.objects.polygons ){
 		polygon.draw(state.canvas)
+	}
+	for( const spawner of state.objects.spawners ){
+		spawner.draw(state.canvas)
 	}
 	state.canvas.ctx.fillStyle = "rgba(0,0,0,0.25)"
 	state.canvas.ctx.fillRect(0,0,state.canvas.dimensions.x,state.canvas.dimensions.y)
@@ -176,6 +187,9 @@ function animationLoop(){
 	}
 	for( const ball of state.objects.balls){
 		ball.draw(state.canvas)
+	}
+	for( const spawner of state.objects.spawners ){
+		spawner.draw(state.canvas)
 	}
 	state.music.synth.drawGraph({x: state.music.graphSize.x / 2, y: state.music.graphSize.y}, state.music.graphSize, state.canvas)
 	if(state.placement.currentlyPlacing == "ball" && state.placement.pointerDown){
@@ -217,8 +231,7 @@ function physicsLoop(callTime){
 		if( collision ){
 			if( vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity){
 				const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2)
-				console.log(positionInStereoField)
-				state.music.synth.playRandomNote(positionInStereoField)
+				state.music.synth.playNote(state.objects.balls[i].frequency, positionInStereoField)
 			}
 			const bounceVector = physics.calculateBounce( state.objects.balls[i], lineToVector(<Point[]> collision), state)
 			state.objects.balls[i].velocity = bounceVector
@@ -229,6 +242,15 @@ function physicsLoop(callTime){
 	const endTime: number = performance.now()
 	if(!state.canvas.paused){
     	setTimeout( ()=> physicsLoop(endTime), 0 )
+	}
+}
+
+function bpmClick(){
+	//spawn a new ball from each spawner according to BPM clock
+	if(state.objects.spawners.length > 0 && !state.canvas.paused && !state.objects.spawnersPaused){
+		for( const spawner of state.objects.spawners ){
+			spawner.spawn(state)
+		}
 	}
 }
 
@@ -255,6 +277,11 @@ document.getElementById("snap").addEventListener("change", (e)=>{
 document.getElementById("ball-life").addEventListener("change", (e)=>{
 	const immortalBallsInput = e.target as HTMLInputElement
 	state.objects.maximumHitCount = immortalBallsInput.checked ? Infinity : 1
+})
+
+document.getElementById("pause-spawner").addEventListener("change", (e)=>{
+	const spawnerPauseInput = e.target as HTMLInputElement
+	state.objects.spawnersPaused = spawnerPauseInput.checked
 })
 
 document.getElementById("drawing-selector").addEventListener("change", (e)=>{
@@ -319,9 +346,14 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 			state.placement.lineStart, 
 			{x: velocity.x * velocityScale, y: velocity.y * velocityScale}, 
 			{x: 0, y: state.physics.gravity}, 
-			state.objects.ballRadius
+			state.objects.ballRadius,
+			state.music.synth.getRandomNote()
 		)
 		state.objects.balls.push(ball)
+	}
+	if(state.placement.currentlyPlacing == "spawner"){
+		const spawner = new Spawner(state.placement.lineStart, state.objects.ballRadius * 2)
+		state.objects.spawners.push(spawner)
 	}
 	if(state.placement.currentlyPlacing == "continuous"){
 		state.placement.drawnPoints.push(state.placement.lineEnd)
@@ -350,6 +382,7 @@ document.getElementById("start").addEventListener( "click", ()=> {
 	state.canvas.paused = false
 	physicsLoop(performance.now())
 	animationLoop()
+	if(!state.music.bpmIntervalID){ state.createNewBpmInterval(bpmClick)}
 })
 
 document.getElementById("pause").addEventListener( "click", ()=> {
@@ -359,8 +392,9 @@ document.getElementById("pause").addEventListener( "click", ()=> {
 })
 
 document.getElementById("clear").addEventListener( "click", ()=> {
-	//remove all but the default polygon
+	//remove all objects from the state
 	state.objects.polygons.splice(0, state.objects.polygons.length)
+	state.objects.spawners.splice(0, state.objects.spawners.length)
 	state.objects.balls.splice(0, state.objects.balls.length)
 })
 
@@ -370,13 +404,10 @@ document.getElementById("bpm").addEventListener("input", (e)=>{
 })
 document.getElementById("rhythm").addEventListener("change", (e)=>{
 	const rhythmInput = e.target as HTMLInputElement
-	if(parseFloat(rhythmInput.value) != 0){
-		state.music.rhythm = 1 / parseFloat(rhythmInput.value)
-	}else{
-		state.music.rhythm = 0.0
-	}
-	state.objects.polygons[0].rotationalVelocity = state.music.rhythm
-	state.objects.polygons[1].rotationalVelocity = state.music.rhythm
+	state.music.rhythm = parseFloat(rhythmInput.value)
+	state.createNewBpmInterval(bpmClick)
+	// state.objects.polygons[0].rotationalVelocity = state.music.rhythm
+	// state.objects.polygons[1].rotationalVelocity = state.music.rhythm
 })
 document.getElementById("volume").addEventListener("input", (e)=>{
 	const volumeInput = e.target as HTMLInputElement

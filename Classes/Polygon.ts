@@ -1,4 +1,4 @@
-import { Canvas, Drawable, Point } from "../Types.js"
+import { Canvas, Color, Drawable, Point } from "../Types.js"
 import { vectorMagnitude } from "./Physics.js";
 
 const rotatePointAboutPoint = (p1: Point, p2: Point, angle: number): Point =>{
@@ -9,7 +9,7 @@ const rotatePointAboutPoint = (p1: Point, p2: Point, angle: number): Point =>{
     return rotatedPoint;
 }
 
-const pointsToLines = (points: Point[], closed: boolean): Point[][] =>{
+export const pointsToLines = (points: Point[], closed: boolean): Point[][] =>{
 	const lines: Point[][] = []
 	for(let i=0; i<points.length-1; i++){
         lines.push( [
@@ -26,13 +26,17 @@ const pointsToLines = (points: Point[], closed: boolean): Point[][] =>{
 	return lines
 }
 
-const drawPolygon = (polygon: Polygon, canvas: Canvas) =>{
+export const drawPolygon = (sides: Point[][], canvas: Canvas, fill?: boolean, fillColor?: Color) =>{
     canvas.ctx.beginPath()
-    for(let i=0; i<polygon.sides.length; i++){
-        canvas.ctx.moveTo( polygon.sides[i][0].x, polygon.sides[i][0].y )
-        canvas.ctx.lineTo( polygon.sides[i][1].x, polygon.sides[i][1].y )
+    canvas.ctx.moveTo( sides[0][0].x, sides[0][0].y )
+    for(let i=0; i<sides.length; i++){
+        canvas.ctx.lineTo( sides[i][1].x, sides[i][1].y )
     }
     canvas.ctx.stroke()
+    if(fill){ 
+        canvas.ctx.fillStyle = fillColor.RGBA
+        canvas.ctx.fill()
+    }
     canvas.ctx.closePath()
 }
 
@@ -87,11 +91,11 @@ export class Polygon implements Drawable{
 	}
 	
     rotate(angle: number){
-        this.points = this.points.map( (point)=> {return rotatePointAboutPoint(point, this.center, angle)} )
+        this.points = this.points.map( (point)=> { return rotatePointAboutPoint(point, this.center, angle)} )
 		this.sides = pointsToLines(this.points, this.closed)
     }
 
     draw(canvas: Canvas){
-        drawPolygon(this, canvas)
+        drawPolygon(this.sides, canvas)
     }
 }

@@ -3,6 +3,7 @@ import { Ball } from "./Ball.js"
 import { Polygon } from "./Polygon.js"
 import { Point, Canvas } from "../Types.js"
 import { Modes, Scales } from "../MusicConstants.js"
+import { Spawner } from "./Spawner.js"
 
 export class SessionState{
     canvas: {
@@ -33,6 +34,8 @@ export class SessionState{
     }
     objects: {
         polygons: Polygon[]
+        spawners: Spawner[]
+        spawnersPaused: boolean
         balls: Ball[]
         ballRadius: number
         maximumHitCount: number
@@ -40,6 +43,7 @@ export class SessionState{
     music: {
         synth: Synth
         bpm: number
+        bpmIntervalID: number
         rhythm: number
         graphSize: Point
         minimumTriggerVelocity: number
@@ -74,6 +78,8 @@ export class SessionState{
         this.objects = {
             polygons: new Array<Polygon>,
             balls: new Array<Ball>,
+            spawners: new Array<Spawner>,
+            spawnersPaused: false,
             ballRadius: ((this.canvas.dimensions.x + this.canvas.dimensions.y) / 2) * 0.01,
             maximumHitCount: Infinity
         }
@@ -81,12 +87,18 @@ export class SessionState{
             synth: new Synth("A", Modes["major"], Scales["pentatonic"], "sine", [4,5], 0.1, {attack: 0.01, decay: 0.1, sustain: 1, release: 0.5}),
             graphSize: {x: this.canvas.dimensions.x * 0.2, y: this.canvas.dimensions.x * 0.1},
             bpm: 120,
-            rhythm: 0,
+            bpmIntervalID: null,
+            rhythm: 1,
             minimumTriggerVelocity: 50
         }
 
         this.music.synth.generateNotes()
         
+    }
+
+    createNewBpmInterval(bpmFunction: any){
+        clearInterval(this.music.bpmIntervalID)
+        this.music.bpmIntervalID = setInterval(bpmFunction, (60 / this.music.bpm) * 1000 * this.music.rhythm)
     }
     
 }

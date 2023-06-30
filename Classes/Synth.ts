@@ -1,5 +1,5 @@
-import { KeyToTonic } from "../MusicConstants.js"
-import { Envelope, Canvas, Point } from "../Types.js"
+import { KeyToTonic } from "../MusicConstants"
+import { Envelope, Canvas, Point } from "../Types"
 
 
 const drawADSR = (center: Point, size: Point, ADSR: Envelope, canvas: Canvas) =>{
@@ -104,13 +104,12 @@ export class Synth{
 		}
 		this.notes = notes
 	}
-	
-	getRandomNote(){
-		const randomIndex: number = Math.floor(Math.random() * this.notes.length)
-		return this.notes[randomIndex]
+
+	midiToFrequency(midiKey: number){
+		return Math.pow(2, (midiKey - 69) / 12) * 440
 	}
-	
-	playRandomNote(panning?: number){
+
+	playNote(frequency: number, panning?: number){
 		const osc = this.context.createOscillator();
 		const noteGain = this.context.createGain();
 		noteGain.gain.setValueAtTime(0.01, 0.0);
@@ -118,7 +117,7 @@ export class Synth{
 		noteGain.gain.exponentialRampToValueAtTime(this.ADSR.sustain, this.context.currentTime + this.ADSR.attack + this.ADSR.decay);
 		noteGain.gain.exponentialRampToValueAtTime(0.0001, this.context.currentTime + this.ADSR.attack + this.ADSR.decay + this.ADSR.release);
 		osc.type = this.wave;
-		osc.frequency.setValueAtTime(this.getRandomNote(), 0);
+		osc.frequency.setValueAtTime(frequency, 0);
 		if(panning){
 			const panNode = this.context.createStereoPanner()
 			panNode.pan.exponentialRampToValueAtTime(panning, 0)
@@ -130,7 +129,15 @@ export class Synth{
 		noteGain.connect(this.filter)
 		osc.start();
 		osc.stop(this.context.currentTime + this.ADSR.attack + this.ADSR.decay + this.ADSR.release);
-		
+	}
+	
+	getRandomNote(){
+		const randomIndex: number = Math.floor(Math.random() * this.notes.length)
+		return this.notes[randomIndex]
+	}
+	
+	playRandomNote(panning?: number){
+		this.playNote(this.getRandomNote(), panning)
 	}
 	
 	drawGraph(center: Point, size: Point, canvas: Canvas){
