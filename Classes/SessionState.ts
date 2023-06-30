@@ -52,8 +52,8 @@ export class SessionState{
         this.canvas = {
             element : canvas.element,
             ctx : canvas.ctx,
-            dimensions : {x: window.innerWidth / 2, y: window.innerHeight * 0.75},
-            center : {x: Math.floor((window.innerWidth / 2) / 2), y: Math.floor((window.innerHeight * 0.75) / 2)},
+            dimensions : {x: window.innerWidth * 0.6, y: window.innerHeight * 0.75},
+            center : {x: Math.floor((window.innerWidth * 0.6) / 2), y: Math.floor((window.innerHeight * 0.75) / 2)},
             fresh: true,
             paused : false
         }
