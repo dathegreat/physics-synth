@@ -16,15 +16,16 @@
 				<input type="number" id="bpm" class="number-input" name="bpm" min="1" max="999" value="120" step="1">
 			</div>
 			<div class="dropdown-wrapper">
-			<label for="rhythm">Spin</label>
+			<label for="rhythm">Rhythm</label>
 				<select id="rhythm" class="dropdown">
-					<option id="8" name="rhythm" value="8">x1/8</option>
-					<option id="4" name="rhythm" value="4">x1/4</option>
-					<option id="2" name="rhythm" value="2">x1/2</option>
-					<option id="0" name="rhythm" value="0" selected>0</option>
-					<option id="1" name="rhythm" value="1">x1</option>
-					<option id="1/2" name="rhythm" value="0.5">x2</option>
-					<option id="1/4" name="rhythm" value="0.25">x4</option>
+					<option id="1/16" name="rhythm" value="0.0625">1/16th note</option>
+					<option id="1/8" name="rhythm" value="0.125">1/8th note</option>
+					<option id="1/4" name="rhythm" value="0.25">1/4 note</option>
+					<option id="1/2" name="rhythm" value="0.5">1/2 note</option>
+					<option id="1" name="rhythm" value="1" selected>1 beat</option>
+					<option id="2" name="rhythm" value="2">2 beats</option>
+					<option id="4" name="rhythm" value="4">4 beats</option>
+					<option id="8" name="rhythm" value="8">8 beats</option>
 				</select>
 			</div>
 			<div class="dropdown-wrapper" id="drawing-selector">
@@ -40,11 +41,20 @@
 					</label>
 				</div>
 				<div class="radio-option">
+					<input type="radio" id="spawner" name="drawing" value="spawner"></input>
+					<label for="spawner">
+						Spawner
+						<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<rect x="100" y="100" width='600' height='600'/>
+						</svg>
+					</label>
+				</div>
+				<div class="radio-option">
 					<input type="radio" id="wall" name="drawing" value="wall"></input>
 					<label for="wall">
 						Wall
 						<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-							<rect x="50" y="200" width='700' height='400'/>
+							<rect x="25" y="225" width='750' height='350'/>
 						</svg>
 					</label>
 				</div>
@@ -71,15 +81,21 @@
 				</div>
 			</div>
 			<div class="dropdown-wrapper" id="snap-selector">
-				<label for="snap-selector">Snap to Grid?:</label>
+				<label for="snap">Snap to Grid</label>
 				<div class="checkbox-wrapper">
 					<input type="checkbox" id="snap" name="snap" class="button">
 				</div>
 			</div>
 			<div class="dropdown-wrapper" id="ball-life-selector">
-				<label for="ball-life-selector">Immortal Balls?:</label>
+				<label for="ball-life">Immortal Balls</label>
 				<div class="checkbox-wrapper">
 					<input type="checkbox" id="ball-life" name="ball-life" class="button" checked>
+				</div>
+			</div>
+			<div class="dropdown-wrapper" id="spawner-pause-selector">
+				<label for="pause-spawner">Pause Spawners</label>
+				<div class="checkbox-wrapper">
+					<input type="checkbox" id="pause-spawner" name="pause-spawner" class="button">
 				</div>
 			</div>
 			<div class="slider-wrapper">

@@ -2,13 +2,13 @@ import { Canvas, Drawable, Point, Color } from "../Types"
 import { getNextColor } from "./Colors"
 
 const drawBall = (ball: Ball, canvas: Canvas) =>{
+    canvas.ctx.beginPath()
     canvas.ctx.fillStyle = `rgba(${ball.color.RGBA})`
     canvas.ctx.strokeStyle = "black"
-    canvas.ctx.beginPath()
     canvas.ctx.arc(ball.center.x, ball.center.y, ball.radius, 0, Math.PI * 2)
     canvas.ctx.closePath()
-    canvas.ctx.stroke()
     canvas.ctx.fill()
+    canvas.ctx.stroke()
 }
 
 export const generateBalls = (amount: number, centers: Point[], velocity: Point, acceleration: Point, radius: number, color: Color, frequencies: number[] ): Ball[] =>{
