@@ -147,9 +147,7 @@ const initializeCanvas = () =>{
 	const polygonThickness = 10
 	const polygonShellStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
-		state.canvas.dimensions.x < state.canvas.dimensions.y 
-			? state.canvas.dimensions.x * 0.45 + polygonThickness 
-			: state.canvas.dimensions.y * 0.45 + polygonThickness, 
+		state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 + polygonThickness : state.canvas.dimensions.y * 0.45 + polygonThickness, 
 		6, 
 		Math.PI / 2)
 	const polygonShell = new Polygon(
