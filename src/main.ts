@@ -5,6 +5,7 @@
 //TODO: add option to save current state and reload old states
 //TODO: add ball spawn mechanic where MIDI key places ball at current mouse location
 //TODO: add tutorial screen for first-time users
+//TODO: add controller ball that randomly changes its respective setting on impact
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "../Classes/Polygon"
 import { SessionState } from "../Classes/SessionState"
 import { Ball } from "../Classes/Ball"
@@ -147,7 +148,9 @@ const initializeCanvas = () =>{
 	const polygonThickness = 10
 	const polygonShellStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
-		state.canvas.dimensions.x < state.canvas.dimensions.y ? state.canvas.dimensions.x * 0.45 + polygonThickness : state.canvas.dimensions.y * 0.45 + polygonThickness, 
+		state.canvas.dimensions.x < state.canvas.dimensions.y 
+			? state.canvas.dimensions.x * 0.45 + polygonThickness 
+			: state.canvas.dimensions.y * 0.45 + polygonThickness, 
 		6, 
 		Math.PI / 2)
 	const polygonShell = new Polygon(
