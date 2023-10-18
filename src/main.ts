@@ -5,7 +5,8 @@
 //TODO: add option to save current state and reload old states
 //TODO: add ball spawn mechanic where MIDI key places ball at current mouse location
 //TODO: add tutorial screen for first-time users
-//TODO: add controller ball that randomly changes its respective setting on impact
+//TODO: add settings menu to clean up UI and add keyboard shortcuts
+//TODO: change default loading geometry to something more musical (precisely calculated polyrhythm or the like)
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "../Classes/Polygon"
 import { SessionState } from "../Classes/SessionState"
 import { Ball } from "../Classes/Ball"
