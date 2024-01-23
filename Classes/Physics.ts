@@ -113,7 +113,7 @@ export class Physics{
         return false
     }
     
-    testGlobalCollision(ball: Ball, polygons: Polygon[], timeDelta: number, state: SessionState): boolean | Point[]{
+    testGlobalCollision(ball: Ball, timeDelta: number, state: SessionState): boolean | Point[]{
         let collision = false;
         for(let i=0; i<state.objects.polygons.length; i++){
             const potentialCollision = this.testCollisionContinuous(ball, state.objects.polygons[i].sides, timeDelta)

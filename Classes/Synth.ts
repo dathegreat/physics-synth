@@ -12,7 +12,6 @@ const drawADSR = (center: Point, size: Point, ADSR: Envelope, canvas: Canvas) =>
 	//normalize each segment width to percentage of graph width
 	const normA = (ADSR.attack / totalDuration) * (size.x * padding)
 	const normD = (ADSR.decay / totalDuration) * (size.x * padding)
-	const normR = (ADSR.release / totalDuration) * (size.x * padding)
 	//draw outline
 	canvas.ctx.beginPath()
 	canvas.ctx.rect(center.x - halfWidth, center.y - halfHeight, size.x, size.y)

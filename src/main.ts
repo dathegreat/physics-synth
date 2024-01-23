@@ -10,33 +10,16 @@
 import { Polygon, generatePolygonAtPoint, generateRectangleFromCenterline } from "../Classes/Polygon"
 import { SessionState } from "../Classes/SessionState"
 import { Ball } from "../Classes/Ball"
-import { Point, Canvas, Drawable, Envelope } from "../Types"
+import { Point, Canvas } from "../Types"
 import { Modes, Scales, KeyToTonic } from "../MusicConstants"
 import { Physics, vectorMagnitude } from "../Classes/Physics"
-import { MidiHandler } from "../Classes/MidiHandler"
 import { Spawner } from "../Classes/Spawner"
 
 let state: SessionState;
 const physics = new Physics();
 
-const normalize = (value: number, min: number, max: number): number =>{
-	return (value - min) / (max - min)
-}
-
 const vectorDifference = (v1: Point, v2: Point): Point =>{
 	return {x: v1.x - v2.x, y: v1.y - v2.y}
-}
-
-const getRandomPointsAroundCenter = (amount: number, center: Point, radius: number): Point[] =>{
-    const points: Point[] = []
-    for(let i=0; i<amount; i++){
-		const plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-        points.push({
-            x: Math.random() * (Math.random() < 0.5 ? -1 : 1) * radius + center.x,
-            y: Math.random() * (Math.random() < 0.5 ? -1 : 1) * radius + center.y
-        })
-    }
-    return points
 }
 
 const lineToVector = (line: Point[]): Point =>{
@@ -45,15 +28,6 @@ const lineToVector = (line: Point[]): Point =>{
 
 const roundByStep = (number, step): number =>{
 	return Math.round(number / step) * step
-}
-
-const drawAllObjects = (objects: Drawable[][], canvas: Canvas) =>{
-	canvas.ctx.clearRect(0, 0, canvas.element.width, canvas.element.height)
-	for(let i=0; i<objects.length; i++){
-		for(let j=0; j<objects[i].length; j++){
-			objects[i][j].draw(canvas)
-		}
-	}
 }
 
 const averageFPS = [0, 0]
@@ -131,7 +105,7 @@ const initializeCanvas = () =>{
 	c.element.width = state.canvas.dimensions.x
 	c.element.height = state.canvas.dimensions.y
 
-	const midiHandler = new MidiHandler()
+	// const midiHandler = new MidiHandler()
 
 	const polygonStartingPoints = generatePolygonAtPoint(
 		state.canvas.center, 
@@ -141,8 +115,6 @@ const initializeCanvas = () =>{
 	const polygon = new Polygon(
 		state.canvas.center, 
 		polygonStartingPoints,
-		{x: 0, y: 0},
-		{x: 0, y: 0},
 		0,
 		true
 	)
@@ -157,8 +129,6 @@ const initializeCanvas = () =>{
 	const polygonShell = new Polygon(
 		state.canvas.center, 
 		polygonShellStartingPoints,
-		{x: 0, y: 0},
-		{x: 0, y: 0},
 		0,
 		true
 	)
@@ -228,7 +198,7 @@ function physicsLoop(callTime){
 			state.objects.balls.splice(i, 1)
 			continue;
 		}
-		const collision = physics.testGlobalCollision(state.objects.balls[i], state.objects.polygons, timeDelta, state)
+		const collision = physics.testGlobalCollision(state.objects.balls[i], timeDelta, state)
 		if( collision ){
 			if( vectorMagnitude(state.objects.balls[i].velocity) > state.music.minimumTriggerVelocity){
 				const positionInStereoField = (state.objects.balls[i].center.x - (state.canvas.dimensions.x / 2)) / (state.canvas.dimensions.x / 2)
@@ -360,7 +330,7 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 		state.placement.drawnPoints.push(state.placement.lineEnd)
 		if(state.placement.drawnPoints.length > 1){
 			state.objects.polygons.push(
-				new Polygon({x:0,y:0}, state.placement.drawnPoints, {x:0,y:0}, {x:0,y:0}, 0, false)
+				new Polygon({x:0,y:0}, state.placement.drawnPoints, 0, false)
 			)
 		}
 		console.log(state.placement.drawnPoints.length)
@@ -370,7 +340,7 @@ document.getElementById("canvas").addEventListener("pointerup", (e)=>{
 		state.placement.drawnPoints.push(state.placement.lineEnd)
 		if(state.placement.drawnPoints.length > 1){
 			state.objects.polygons.push(
-				new Polygon({x:0,y:0}, state.placement.drawnPoints, {x:0,y:0}, {x:0,y:0}, 0, true)
+				new Polygon({x:0,y:0}, state.placement.drawnPoints, 0, true)
 			)
 		}
 		state.placement.drawnPoints = []

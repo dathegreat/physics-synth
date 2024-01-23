@@ -1,7 +1,6 @@
 import { Canvas, Drawable, Point, Color } from "../Types"
 import { Ball } from "./Ball"
 import { getRandomColor } from "./Colors"
-import { randInt } from "./Math"
 import { generatePolygonAtPoint, drawPolygon, pointsToLines } from "./Polygon"
 import { SessionState } from "./SessionState"
 

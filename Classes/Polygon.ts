@@ -64,7 +64,7 @@ export const generateRectangleFromCenterline = (centerLine: Point[], width: numb
 		{ x: centerLine[1].x - thicknessVector.x, y: centerLine[1].y - thicknessVector.y }, //bottom left
 		{ x: centerLine[1].x + thicknessVector.x, y: centerLine[1].y + thicknessVector.y }  //bottom right
 	]
-	return new Polygon(midpoint, points, {x:0, y:0}, {x:0, y:0}, 0, true)
+	return new Polygon(midpoint, points, 0, true)
 }
 
 export class Polygon implements Drawable{
@@ -75,7 +75,7 @@ export class Polygon implements Drawable{
     sideLength: number
     closed: boolean
 
-    constructor(center: Point, points: Point[], velocity: Point, acceleration: Point, rotationalVelocity: number, closed: boolean){
+    constructor(center: Point, points: Point[], rotationalVelocity: number, closed: boolean){
         this.center = center;
 		this.rotationalVelocity = rotationalVelocity
         this.points = points
